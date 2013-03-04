@@ -9,14 +9,15 @@
   "version": "0.0.1",
   "keywords": [
     "hapi",
-    "plugin"
+    "plugin",
+    "batch"
   ],
   "main": "index",
   "engines": {
     "node": "0.8.x"
   },
   "peerDependencies": {
-    "hapi": "0.14.x"
+    "hapi": "0.15.x"
   },
   "dependencies": {
     "async": "0.1.x",
@@ -24,9 +25,9 @@
     "boom": "0.3.x"
   },
   "devDependencies": {
+    "hapi": "0.15.x",
     "mocha": "1.x.x",
     "chai": "1.x.x",
-    "hapi": "0.14.x",
     "blanket": "1.0.x",
     "sinon": "1.x.x",
     "travis-cov": "0.2.x",

@@ -121,7 +121,7 @@ describe('Batch', function () {
             }
         ]);
 
-        _server.plugin().require('../', done)
+        _server.plugin.require('../', done)
     }
 
     function makeRequest(payload, callback) {
