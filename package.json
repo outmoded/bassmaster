@@ -1,18 +1,19 @@
 {
   "name": "bassmaster",
   "description": "Batch processing plugin for hapi",
-  "author": "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
+  "author": "Wyatt Preul <wpreul@gmail.com>",
   "contributors": [
-    "Van Nguyen <the.gol.effect@gmail.com>",
-    "Wyatt Preul <wpreul@gmail.com>"
+    "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
+    "Van Nguyen <the.gol.effect@gmail.com>"
   ],
-  "version": "0.0.1",
+  "repository": "git://github.com/spumko/bassmaster",
+  "version": "0.0.2",
+  "main": "index",
   "keywords": [
     "hapi",
     "plugin",
     "batch"
   ],
-  "main": "index",
   "engines": {
     "node": "0.8.x"
   },
@@ -41,7 +42,7 @@
   "licenses": [
     {
       "type": "BSD",
-      "url": "http://github.com/walmartlabs/hapi/raw/master/LICENSE"
+      "url": "http://github.com/spamko/bassmaster/raw/master/LICENSE"
     }
   ]
 }
