@@ -18,7 +18,7 @@
     "node": "0.8.x"
   },
   "peerDependencies": {
-    "hapi": "0.16.x"
+    "hapi": "1.0.x"
   },
   "dependencies": {
     "async": "0.2.x",
@@ -26,9 +26,9 @@
     "boom": "0.3.x"
   },
   "devDependencies": {
-    "hapi": "0.16.x",
+    "hapi": "1.0.x",
     "sinon": "1.x.x",
-    "lab": "0.0.x",
+    "lab": "0.1.x",
     "complexity-report": "0.x.x"
   },
   "scripts": {
