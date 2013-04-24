@@ -22,7 +22,7 @@ var it = Lab.test;
 
 describe('Batch', function () {
 
-    var _server = null;
+    var server = null;
 
     var profileHandler = function (request) {
 
@@ -44,6 +44,14 @@ describe('Batch', function () {
 
         request.reply({
             'id': request.params.id,
+            'name': 'Item'
+        });
+    };
+
+    var item2Handler = function (request) {
+
+        request.reply({
+            'id': request.params.id || 'mystery-guest',
             'name': 'Item'
         });
     };
@@ -101,11 +109,12 @@ describe('Batch', function () {
 
     function setupServer(done) {
 
-        _server = new Hapi.Server(0);
-        _server.route([
+        server = new Hapi.Server(0);
+        server.route([
             { method: 'GET', path: '/profile', handler: profileHandler },
             { method: 'GET', path: '/item', handler: activeItemHandler },
             { method: 'GET', path: '/item/{id}', handler: itemHandler },
+            { method: 'GET', path: '/item2/{id?}', handler: item2Handler },
             { method: 'GET', path: '/error', handler: errorHandler },
             { method: 'GET', path: '/badchar', handler: badCharHandler },
             { method: 'GET', path: '/badvalue', handler: badValueHandler },
@@ -125,7 +134,7 @@ describe('Batch', function () {
             }
         ]);
 
-        _server.plugin.require('../', done)
+        server.pack.require('../', done)
     }
 
     function makeRequest(payload, callback) {
@@ -135,7 +144,7 @@ describe('Batch', function () {
             return callback(res.result);
         };
 
-        _server.inject({
+        server.inject({
             method: 'post',
             url: '/batch',
             payload: payload
@@ -164,6 +173,17 @@ describe('Batch', function () {
             expect(res.length).to.equal(2);
             expect(res[1].id).to.equal('55cf687663');
             expect(res[1].name).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('shows two ordered responses when requesting two endpoints (with optional path param)', function (done) {
+
+        makeRequest('{ "requests": [{"method": "get", "path": "/item2/john"}, {"method": "get", "path": "/item2/"}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('john');
+            expect(res[1].id).to.equal('mystery-guest');
             done();
         });
     });
