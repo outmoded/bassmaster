@@ -1,13 +1,13 @@
 {
   "name": "bassmaster",
   "description": "Batch processing plugin for hapi",
-  "author": "Wyatt Preul <wpreul@gmail.com>",
+  "author": "Wyatt Preul <wpreul@gmail.com> (http://jsgeek.com)",
   "contributors": [
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
     "Van Nguyen <the.gol.effect@gmail.com>"
   ],
   "repository": "git://github.com/spumko/bassmaster",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "index",
   "keywords": [
     "hapi",
@@ -22,8 +22,7 @@
   },
   "dependencies": {
     "async": "0.2.x",
-    "hoek": "0.8.x",
-    "boom": "0.4.x"
+    "hoek": "0.8.x"
   },
   "devDependencies": {
     "hapi": "1.x.x",

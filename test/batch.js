@@ -141,7 +141,7 @@ describe('Batch', function () {
             }
         ]);
 
-        server.pack.require('../', done)
+        server.pack.require('../', done);
     }
 
     function makeRequest(payload, callback) {
@@ -307,7 +307,7 @@ describe('Batch', function () {
 
     it('supports posting multiple requests', function (done) {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "content":{"a":1}}, {"method": "post", "path": "/echo", "content":{"a":2}}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
             expect(res[0]).to.eql({a:1});
@@ -318,7 +318,7 @@ describe('Batch', function () {
 
     it('supports sending multiple PUTs requests', function (done) {
 
-        makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "content":{"a":1}}, {"method": "put", "path": "/echo", "content":{"a":2}}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "payload":{"a":1}}, {"method": "put", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
             expect(res[0]).to.eql({a:1});
@@ -329,7 +329,7 @@ describe('Batch', function () {
 
     it('supports piping a response from post into the next get request', function (done) {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "content": {"id":"55cf687663"}}, {"method": "get", "path": "/item/$0.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": {"id":"55cf687663"}}, {"method": "get", "path": "/item/$0.id"}] }', function (res) {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
