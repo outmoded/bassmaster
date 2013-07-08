@@ -107,17 +107,24 @@ describe('Batch', function () {
         request.reply(new Error('myerror'));
     };
 
+    var echoHandler = function (request) {
+
+        request.reply(request.payload);
+    };
+
     function setupServer(done) {
 
         server = new Hapi.Server(0);
         server.route([
-            { method: 'GET', path: '/profile', handler: profileHandler },
-            { method: 'GET', path: '/item', handler: activeItemHandler },
-            { method: 'GET', path: '/item/{id}', handler: itemHandler },
-            { method: 'GET', path: '/item2/{id?}', handler: item2Handler },
-            { method: 'GET', path: '/error', handler: errorHandler },
-            { method: 'GET', path: '/badchar', handler: badCharHandler },
-            { method: 'GET', path: '/badvalue', handler: badValueHandler },
+            { method: 'POST', path: '/echo', handler: echoHandler },
+            { method: 'PUT', path: '/echo', handler: echoHandler },
+            { method: 'GET',  path: '/profile', handler: profileHandler },
+            { method: 'GET',  path: '/item', handler: activeItemHandler },
+            { method: 'GET',  path: '/item/{id}', handler: itemHandler },
+            { method: 'GET',  path: '/item2/{id?}', handler: item2Handler },
+            { method: 'GET',  path: '/error', handler: errorHandler },
+            { method: 'GET',  path: '/badchar', handler: badCharHandler },
+            { method: 'GET',  path: '/badvalue', handler: badValueHandler },
             {
                 method: 'GET',
                 path: '/fetch',
@@ -292,6 +299,40 @@ describe('Batch', function () {
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
             expect(res[0].name).to.equal('Active Item');
+            expect(res[1].id).to.equal('55cf687663');
+            expect(res[1].name).to.equal('Item');
+            done();
+        });
+    });
+
+    it('supports posting multiple requests', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "content":{"a":1}}, {"method": "post", "path": "/echo", "content":{"a":2}}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0]).to.eql({a:1});
+            expect(res[1]).to.eql({a:2});
+            done();
+        });
+    });
+
+    it('supports sending multiple PUTs requests', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "content":{"a":1}}, {"method": "put", "path": "/echo", "content":{"a":2}}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0]).to.eql({a:1});
+            expect(res[1]).to.eql({a:2});
+            done();
+        });
+    });
+
+    it('supports piping a response from post into the next get request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "content": {"id":"55cf687663"}}, {"method": "get", "path": "/item/$0.id"}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
             expect(res[1].id).to.equal('55cf687663');
             expect(res[1].name).to.equal('Item');
             done();
