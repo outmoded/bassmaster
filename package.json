@@ -7,7 +7,7 @@
     "Van Nguyen <the.gol.effect@gmail.com>"
   ],
   "repository": "git://github.com/spumko/bassmaster",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "index",
   "keywords": [
     "hapi",
