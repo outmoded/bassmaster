@@ -25,9 +25,10 @@ describe('Batch', function () {
     var server = null;
 
     var profileHandler = function (request) {
+        var id = request.query.id || 'fa0dbda9b1b';
 
         request.reply({
-            'id': 'fa0dbda9b1b',
+            'id': id,
             'name': 'John Doe'
         });
     };
@@ -166,6 +167,26 @@ describe('Batch', function () {
 
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('supports query string in the request', function (done) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile?id=someid" }] }', function (res) {
+
+            expect(res[0].id).to.equal('someid');
+            expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('supports non alphanum characters in the request', function (done) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/item/item-_^~&-end" }] }', function (res) {
+
+            expect(res[0].id).to.equal('item-_^~&-end');
+            expect(res[0].name).to.equal('Item');
             expect(res.length).to.equal(1);
             done();
         });
