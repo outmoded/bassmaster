@@ -81,7 +81,7 @@ internals.main = function () {
                 console.log('Server started at: ' + internals.http.settings.uri);
             });
         }
-    })
+    });
 };
 
 
