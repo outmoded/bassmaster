@@ -2,7 +2,7 @@
   "name": "bassmaster",
   "description": "Batch processing plugin for hapi",
   "repository": "git://github.com/spumko/bassmaster",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "main": "index",
   "keywords": [
     "hapi",
@@ -13,14 +13,14 @@
     "node": "0.10.x"
   },
   "peerDependencies": {
-    "hapi": "1.x.x"
+    "hapi": "2.x.x"
   },
   "dependencies": {
     "async": "0.2.x",
     "hoek": "1.x.x"
   },
   "devDependencies": {
-    "hapi": "1.x.x",
+    "hapi": "2.x.x",
     "sinon": "1.x.x",
     "lab": "1.x.x"
   },

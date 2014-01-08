@@ -24,50 +24,50 @@ describe('Batch', function () {
 
     var server = null;
 
-    var profileHandler = function (request) {
+    var profileHandler = function (request, reply) {
         var id = request.query.id || 'fa0dbda9b1b';
 
-        request.reply({
+        reply({
             'id': id,
             'name': 'John Doe'
         });
     };
 
-    var activeItemHandler = function (request) {
+    var activeItemHandler = function (request, reply) {
 
-        request.reply({
+        reply({
             'id': '55cf687663',
             'name': 'Active Item'
         });
     };
 
-    var itemHandler = function (request) {
+    var itemHandler = function (request, reply) {
 
-        request.reply({
+        reply({
             'id': request.params.id,
             'name': 'Item'
         });
     };
 
-    var item2Handler = function (request) {
+    var item2Handler = function (request, reply) {
 
-        request.reply({
+        reply({
             'id': request.params.id || 'mystery-guest',
             'name': 'Item'
         });
     };
 
-    var badCharHandler = function (request) {
+    var badCharHandler = function (request, reply) {
 
-        request.reply({
+        reply({
             'id': 'test',
             'name': Date.now()
         });
     };
 
-    var badValueHandler = function (request) {
+    var badValueHandler = function (request, reply) {
 
-        request.reply(null);
+        reply(null);
     };
 
     var fetch1 = function (request, next) {
@@ -98,19 +98,19 @@ describe('Batch', function () {
         next(request.pre.m2 + '!');
     };
 
-    var getFetch = function (request) {
+    var getFetch = function (request, reply) {
 
-        request.reply(request.pre.m5 + '\n');
+        reply(request.pre.m5 + '\n');
     };
 
-    var errorHandler = function (request) {
+    var errorHandler = function (request, reply) {
 
-        request.reply(new Error('myerror'));
+        reply(new Error('myerror'));
     };
 
-    var echoHandler = function (request) {
+    var echoHandler = function (request, reply) {
 
-        request.reply(request.payload);
+        reply(request.payload);
     };
 
     function setupServer(done) {
@@ -376,7 +376,7 @@ describe('Batch', function () {
 
         makeRequest('{ "blah": "test" }', function (res) {
 
-            expect(res.code).to.equal(400);
+            expect(res.statusCode).to.equal(400);
             done();
         });
     });
@@ -385,7 +385,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/$1"}] }', function (res) {
 
-            expect(res.code).to.equal(400);
+            expect(res.statusCode).to.equal(400);
             done();
         });
     });
@@ -394,7 +394,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/error"}] }', function (res) {
 
-            expect(res[0].code).to.equal(500);
+            expect(res[0].statusCode).to.equal(500);
             expect(res[0].message).to.equal('myerror');
             done();
         });
@@ -422,7 +422,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
 
-            expect(res.code).to.equal(500);
+            expect(res.statusCode).to.equal(500);
             expect(res.message).to.equal('Reference value includes illegal characters');
             done();
         });
@@ -432,7 +432,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$:.name"}] }', function (res) {
 
-            expect(res.code).to.equal(400);
+            expect(res.statusCode).to.equal(400);
             done();
         });
     });
@@ -441,7 +441,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
 
-            expect(res.code).to.equal(500);
+            expect(res.statusCode).to.equal(500);
             expect(res.message).to.equal('Missing reference response');
             done();
         });
@@ -451,7 +451,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.1"}] }', function (res) {
 
-            expect(res.code).to.equal(500);
+            expect(res.statusCode).to.equal(500);
             done();
         });
     });
