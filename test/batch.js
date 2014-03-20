@@ -70,6 +70,10 @@ describe('Batch', function () {
         reply(null);
     };
 
+    var redirectHandler = function (request, reply) {
+        reply().redirect('/profile');
+    };
+
     var fetch1 = function (request, next) {
 
         next('Hello');
@@ -139,7 +143,8 @@ describe('Batch', function () {
                         { method: fetch5, assign: 'm5' }
                     ]
                 }
-            }
+            },
+            { method: 'GET', path: '/redirect', handler: redirectHandler },
         ]);
 
         server.pack.require('../', done);
@@ -164,6 +169,17 @@ describe('Batch', function () {
     it('shows single response when making request for single endpoint', function (done) {
 
         makeRequest('{ "requests": [{ "method": "get", "path": "/profile" }] }', function (res) {
+
+            expect(res[0].id).to.equal('fa0dbda9b1b');
+            expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('supports redirect', function (done) {
+
+        makeRequest('{ "requests": [{ "method": "get", "path": "/redirect" }] }', function (res) {
 
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
