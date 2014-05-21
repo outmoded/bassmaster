@@ -13,14 +13,14 @@
     "node": ">=0.10.22"
   },
   "peerDependencies": {
-    "hapi": ">=2.x.x"
+    "hapi": "5.x.x"
   },
   "dependencies": {
-    "async": "0.2.x",
-    "hoek": "1.x.x"
+    "async": "0.8.x",
+    "hoek": "2.x.x"
   },
   "devDependencies": {
-    "hapi": "3.x.x",
+    "hapi": "5.x.x",
     "sinon": "1.x.x",
     "lab": "1.x.x"
   },
