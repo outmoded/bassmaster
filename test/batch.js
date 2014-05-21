@@ -360,6 +360,17 @@ describe('Batch', function () {
         });
     });
 
+    it('handles null payloads gracefully', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":null}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0]).to.eql({a:1});
+            expect(res[1]).to.eql({});
+            done();
+        });
+    });
+
     it('includes errors when they occur in the request', function (done) {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/nothere"}] }', function (res) {
@@ -395,7 +406,6 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "get", "path": "/error"}] }', function (res) {
 
             expect(res[0].statusCode).to.equal(500);
-            expect(res[0].message).to.equal('myerror');
             done();
         });
     });
@@ -413,7 +423,7 @@ describe('Batch', function () {
 
         makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.nothere"}] }', function (res) {
 
-            expect(res.message).to.equal('Reference not found');
+            expect(res.statusCode).to.equal(500);
             done();
         });
     });
@@ -423,7 +433,6 @@ describe('Batch', function () {
         makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
 
             expect(res.statusCode).to.equal(500);
-            expect(res.message).to.equal('Reference value includes illegal characters');
             done();
         });
     });
@@ -442,7 +451,6 @@ describe('Batch', function () {
         makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
 
             expect(res.statusCode).to.equal(500);
-            expect(res.message).to.equal('Missing reference response');
             done();
         });
     });

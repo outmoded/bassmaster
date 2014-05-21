@@ -3,6 +3,11 @@
 
 The batch endpoint makes it easy to combine requests into a single one.  It also supports pipelining so you are able to take the result of one of the endpoints in the batch request and use it in a subsequent endpoint.  The batch endpoint only responds to POST requests.
 
+[![Build Status](https://secure.travis-ci.org/spumko/bassmaster.png)](http://travis-ci.org/spumko/bassmaster)
+
+[![NPM](https://nodei.co/npm/bassmaster.png?downloads=true&stars=true)](https://nodei.co/npm/bassmaster/)
+
+
 ## Getting Started
 Install **bassmaster** by either running `npm install bassmaster` in your sites working directory or add 'bassmaster' to the dependencies section of the 'package.json' file and run `npm install`.
 
