@@ -13,7 +13,7 @@
     "node": ">=0.10.22"
   },
   "peerDependencies": {
-    "hapi": "5.x.x"
+    "hapi": ">=2.x.x"
   },
   "dependencies": {
     "async": "0.8.x",
