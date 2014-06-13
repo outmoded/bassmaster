@@ -480,4 +480,36 @@ describe('Batch', function () {
             done();
         });
     });
+
+    it('supports an optional query object', function (done) {
+
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "someid" } }] }', function(res){
+
+            expect(res[0].id).to.equal('someid');
+            expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('supports alphanum characters in the query', function (done) {
+
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "item-_^~&-end" } }] }', function(res){
+
+            expect(res[0].id).to.equal('item-_^~&-end');
+            expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('handles null queries gracefully', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
+
+            expect(res.length).to.equal(1);
+            expect(res[0]).to.eql({});
+            done();
+        });
+    });
 });
