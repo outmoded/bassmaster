@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "async": "0.8.x",
+    "boom": "2.x.x",
     "hoek": "2.x.x"
   },
   "devDependencies": {
