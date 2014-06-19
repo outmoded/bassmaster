@@ -71,7 +71,7 @@ describe('Batch', function () {
     };
 
     var redirectHandler = function (request, reply) {
-        
+
         reply().redirect('/profile');
     };
 
@@ -170,7 +170,7 @@ describe('Batch', function () {
     it('shows single response when making request for single endpoint', function (done) {
 
         makeRequest('{ "requests": [{ "method": "get", "path": "/profile" }] }', function (res) {
-            console.log(res);
+
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
             expect(res.length).to.equal(1);
