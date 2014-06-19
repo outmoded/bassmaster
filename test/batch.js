@@ -4,6 +4,7 @@ var Lab = require('lab');
 var Sinon = require('sinon');
 var Async = require('async');
 var Hapi = require('hapi');
+var Bassmaster = require('../');
 
 
 // Declare internals
@@ -148,7 +149,7 @@ describe('Batch', function () {
             { method: 'GET', path: '/redirect', handler: redirectHandler },
         ]);
 
-        server.pack.require('../', done);
+        server.pack.register({ plugin: Bassmaster }, done);
     }
 
     function makeRequest(payload, callback) {
