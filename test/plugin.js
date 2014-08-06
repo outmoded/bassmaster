@@ -2,6 +2,7 @@
 
 var Lab = require('lab');
 var Hapi = require('hapi');
+var Bassmaster = require('../');
 
 
 // Declare internals
@@ -23,7 +24,7 @@ describe('bassmaster', function () {
     it('can be added as a plugin to hapi', function (done) {
 
         var server = new Hapi.Server();
-        server.pack.require('../', function (err) {
+        server.pack.register({ plugin: Bassmaster }, function (err) {
 
             expect(err).to.not.exist;
             done();
@@ -33,7 +34,7 @@ describe('bassmaster', function () {
     it('can be given a custom route url', function (done) {
 
         var server = new Hapi.Server();
-        server.pack.require('../', { batchEndpoint: '/custom' }, function (err) {
+        server.pack.register({ plugin: Bassmaster, options: { batchEndpoint: '/custom' }}, function (err) {
 
             expect(err).to.not.exist;
             var path = server.table()[0].settings.path;
@@ -45,7 +46,7 @@ describe('bassmaster', function () {
     it('can be given a custom description', function(done){
 
         var server = new Hapi.Server();
-        server.pack.require('../', { description: 'customDescription' }, function (err) {
+        server.pack.register({ plugin: Bassmaster, options: { description: 'customDescription' }}, function (err) {
 
             expect(err).to.not.exist;
             var description = server.table()[0].settings.description;
@@ -57,7 +58,7 @@ describe('bassmaster', function () {
     it('can be given custom tags', function(done){
 
         var server = new Hapi.Server();
-        server.pack.require('../', { tags: ['custom', 'tags'] }, function (err) {
+        server.pack.register({ plugin: Bassmaster, options: { tags: ['custom', 'tags'] }}, function (err) {
 
             expect(err).to.not.exist;
             var tags = server.table()[0].settings.tags;

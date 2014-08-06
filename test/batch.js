@@ -4,6 +4,7 @@ var Lab = require('lab');
 var Sinon = require('sinon');
 var Async = require('async');
 var Hapi = require('hapi');
+var Bassmaster = require('../');
 
 
 // Declare internals
@@ -71,7 +72,7 @@ describe('Batch', function () {
     };
 
     var redirectHandler = function (request, reply) {
-        
+
         reply().redirect('/profile');
     };
 
@@ -148,7 +149,7 @@ describe('Batch', function () {
             { method: 'GET', path: '/redirect', handler: redirectHandler },
         ]);
 
-        server.pack.require('../', done);
+        server.pack.register({ plugin: Bassmaster }, done);
     }
 
     function makeRequest(payload, callback) {
@@ -170,7 +171,7 @@ describe('Batch', function () {
     it('shows single response when making request for single endpoint', function (done) {
 
         makeRequest('{ "requests": [{ "method": "get", "path": "/profile" }] }', function (res) {
-            console.log(res);
+
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
             expect(res.length).to.equal(1);
