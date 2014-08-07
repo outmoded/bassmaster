@@ -2,7 +2,7 @@
   "name": "bassmaster",
   "description": "Batch processing plugin for hapi",
   "repository": "git://github.com/hapijs/bassmaster",
-  "version": "1.4.1",
+  "version": "1.5.1",
   "main": "index",
   "keywords": [
     "hapi",
