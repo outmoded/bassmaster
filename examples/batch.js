@@ -20,34 +20,34 @@ var internals = {};
  */
 
 
-internals.profile = function (request) {
+internals.profile = function (request, reply) {
 
-    request.reply({
+    reply({
         'id': 'fa0dbda9b1b',
         'name': 'John Doe'
     });
 };
 
 
-internals.activeItem = function (request) {
+internals.activeItem = function (request, reply) {
 
-    request.reply({
+    reply({
         'id': '55cf687663',
         'name': 'Active Item'
     });
 };
 
 
-internals.item = function (request) {
+internals.item = function (request, reply) {
 
-    request.reply({
+    reply({
         'id': request.params.id,
         'name': 'Item'
     });
 };
 
 
-internals.requestBatch = function (request) {
+internals.requestBatch = function (request, reply) {
 
     internals.http.inject({
         method: 'POST',
@@ -55,7 +55,7 @@ internals.requestBatch = function (request) {
         payload: '{ "requests": [{ "method": "get", "path": "/profile" }, { "method": "get", "path": "/item" }, { "method": "get", "path": "/item/$1.id" }] }'
     }, function (res) {
 
-        request.reply(res.result);
+        reply(res.result);
     });
 };
 
@@ -71,14 +71,16 @@ internals.main = function () {
         { method: 'GET', path: '/request', handler: internals.requestBatch }
     ]);
 
-    internals.http.plugin().require('../', function (err) {
+    internals.http.pack.register({
+        plugin: require('../')
+    }, function (err) {
 
         if (err) {
             console.log(err);
         }
         else {
             internals.http.start(function () {
-                console.log('Server started at: ' + internals.http.settings.uri);
+                console.log('Server started.');
             });
         }
     });
