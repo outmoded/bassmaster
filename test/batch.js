@@ -57,11 +57,36 @@ describe('Batch', function () {
         });
     };
 
+    var zeroIntegerHandler = function (request, reply) {
+
+        reply({
+            'id': 0,
+            'name': 'Zero Item'
+        });
+    };
+
+    var integerHandler = function (request, reply) {
+
+        reply({
+            'id': 123,
+            'name': 'Integer Item'
+        });
+    };
+
+    var integerItemHandler = function (request, reply) {
+
+        reply({
+            'id': request.params.id,
+            'name': 'Integer'
+        });
+    };
+
     var badCharHandler = function (request, reply) {
 
         reply({
             'id': 'test',
-            'name': Date.now()
+            'null': null,
+            'invalidChar': '#'
         });
     };
 
@@ -128,6 +153,9 @@ describe('Batch', function () {
             { method: 'GET',  path: '/item', handler: activeItemHandler },
             { method: 'GET',  path: '/item/{id}', handler: itemHandler },
             { method: 'GET',  path: '/item2/{id?}', handler: item2Handler },
+            { method: 'GET',  path: '/zero', handler: zeroIntegerHandler },
+            { method: 'GET',  path: '/int', handler: integerHandler },
+            { method: 'GET',  path: '/int/{id}', handler: integerItemHandler },
             { method: 'GET',  path: '/error', handler: errorHandler },
             { method: 'GET',  path: '/badchar', handler: badCharHandler },
             { method: 'GET',  path: '/badvalue', handler: badValueHandler },
@@ -343,6 +371,32 @@ describe('Batch', function () {
         });
     });
 
+    it('supports piping integer response into the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal(123);
+            expect(res[0].name).to.equal('Integer Item');
+            expect(res[1].id).to.equal('123');
+            expect(res[1].name).to.equal('Integer');
+            done();
+        });
+    });
+
+    it('supports piping a zero integer response into the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "get", "path": "/int/$0.id"}] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal(0);
+            expect(res[0].name).to.equal('Zero Item');
+            expect(res[1].id).to.equal('0');
+            expect(res[1].name).to.equal('Integer');
+            done();
+        });
+    });
+
     it('supports posting multiple requests', function (done) {
 
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', function (res) {
@@ -447,7 +501,16 @@ describe('Batch', function () {
 
     it('handles a bad character in the reference value', function (done) {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.invalidChar"}] }', function (res) {
+
+            expect(res.statusCode).to.equal(500);
+            done();
+        });
+    });
+
+    it('handles a null value in the reference value', function (done) {
+
+        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.null"}] }', function (res) {
 
             expect(res.statusCode).to.equal(500);
             done();
