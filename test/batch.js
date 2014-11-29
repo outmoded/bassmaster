@@ -1,10 +1,11 @@
 // Load modules
 
+var Async = require('async');
+var Bassmaster = require('../');
+var Code = require('code');
+var Hapi = require('hapi');
 var Lab = require('lab');
 var Sinon = require('sinon');
-var Async = require('async');
-var Hapi = require('hapi');
-var Bassmaster = require('../');
 
 
 // Declare internals
@@ -14,10 +15,11 @@ var internals = {};
 
 // Test shortcuts
 
-var expect = Lab.expect;
-var before = Lab.before;
-var describe = Lab.experiment;
-var it = Lab.test;
+var lab = exports.lab = Lab.script();
+var describe = lab.describe;
+var it = lab.it;
+var before = lab.before;
+var expect = Code.expect;
 
 
 describe('Batch', function () {
@@ -27,7 +29,7 @@ describe('Batch', function () {
     var profileHandler = function (request, reply) {
         var id = request.query.id || 'fa0dbda9b1b';
 
-        reply({
+        return reply({
             'id': id,
             'name': 'John Doe'
         });
@@ -35,7 +37,7 @@ describe('Batch', function () {
 
     var activeItemHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': '55cf687663',
             'name': 'Active Item'
         });
@@ -43,7 +45,7 @@ describe('Batch', function () {
 
     var itemHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': request.params.id,
             'name': 'Item'
         });
@@ -51,7 +53,7 @@ describe('Batch', function () {
 
     var item2Handler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': request.params.id || 'mystery-guest',
             'name': 'Item'
         });
@@ -59,7 +61,7 @@ describe('Batch', function () {
 
     var zeroIntegerHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': 0,
             'name': 'Zero Item'
         });
@@ -67,7 +69,7 @@ describe('Batch', function () {
 
     var integerHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': 123,
             'name': 'Integer Item'
         });
@@ -75,7 +77,7 @@ describe('Batch', function () {
 
     var integerItemHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': request.params.id,
             'name': 'Integer'
         });
@@ -83,7 +85,7 @@ describe('Batch', function () {
 
     var badCharHandler = function (request, reply) {
 
-        reply({
+        return reply({
             'id': 'test',
             'null': null,
             'invalidChar': '#'
@@ -92,12 +94,12 @@ describe('Batch', function () {
 
     var badValueHandler = function (request, reply) {
 
-        reply(null);
+        return reply(null);
     };
 
     var redirectHandler = function (request, reply) {
 
-        reply().redirect('/profile');
+        return reply().redirect('/profile');
     };
 
     var fetch1 = function (request, next) {
@@ -130,22 +132,23 @@ describe('Batch', function () {
 
     var getFetch = function (request, reply) {
 
-        reply(request.pre.m5 + '\n');
+        return reply(request.pre.m5 + '\n');
     };
 
     var errorHandler = function (request, reply) {
 
-        reply(new Error('myerror'));
+        return reply(new Error('myerror'));
     };
 
     var echoHandler = function (request, reply) {
 
-        reply(request.payload);
+        return reply(request.payload);
     };
 
-    function setupServer(done) {
+    var setupServer = function (done) {
 
-        server = new Hapi.Server(0);
+        server = new Hapi.Server();
+        server.connection();
         server.route([
             { method: 'POST', path: '/echo', handler: echoHandler },
             { method: 'PUT', path: '/echo', handler: echoHandler },
@@ -173,13 +176,13 @@ describe('Batch', function () {
                     ]
                 }
             },
-            { method: 'GET', path: '/redirect', handler: redirectHandler },
+            { method: 'GET', path: '/redirect', handler: redirectHandler }
         ]);
 
-        server.pack.register({ plugin: Bassmaster }, done);
-    }
+        server.register(Bassmaster, done);
+    };
 
-    function makeRequest(payload, callback) {
+    var makeRequest = function (payload, callback) {
 
         var next = function (res) {
 
@@ -191,7 +194,7 @@ describe('Batch', function () {
             url: '/batch',
             payload: payload
         }, next);
-    }
+    };
 
     before(setupServer);
 
@@ -402,8 +405,8 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.eql({a:1});
-            expect(res[1]).to.eql({a:2});
+            expect(res[0]).to.deep.equal({a:1});
+            expect(res[1]).to.deep.equal({a:2});
             done();
         });
     });
@@ -413,8 +416,8 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "payload":{"a":1}}, {"method": "put", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.eql({a:1});
-            expect(res[1]).to.eql({a:2});
+            expect(res[0]).to.deep.equal({a:1});
+            expect(res[1]).to.deep.equal({a:2});
             done();
         });
     });
@@ -436,8 +439,8 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":null}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.eql({a:1});
-            expect(res[1]).to.eql({});
+            expect(res[0]).to.deep.equal({a:1});
+            expect(res[1]).to.deep.equal({});
             done();
         });
     });
@@ -449,7 +452,7 @@ describe('Batch', function () {
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
             expect(res[0].name).to.equal('Active Item');
-            expect(res[1].error).to.exist;
+            expect(res[1].error).to.exist();
             done();
         });
     });
@@ -571,7 +574,7 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
 
             expect(res.length).to.equal(1);
-            expect(res[0]).to.eql({});
+            expect(res[0]).to.deep.equal({});
             done();
         });
     });

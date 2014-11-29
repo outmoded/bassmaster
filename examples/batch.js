@@ -22,7 +22,7 @@ var internals = {};
 
 internals.profile = function (request, reply) {
 
-    reply({
+    return reply({
         'id': 'fa0dbda9b1b',
         'name': 'John Doe'
     });
@@ -31,7 +31,7 @@ internals.profile = function (request, reply) {
 
 internals.activeItem = function (request, reply) {
 
-    reply({
+    return reply({
         'id': '55cf687663',
         'name': 'Active Item'
     });
@@ -40,7 +40,7 @@ internals.activeItem = function (request, reply) {
 
 internals.item = function (request, reply) {
 
-    reply({
+    return reply({
         'id': request.params.id,
         'name': 'Item'
     });
@@ -62,7 +62,8 @@ internals.requestBatch = function (request, reply) {
 
 internals.main = function () {
 
-    internals.http = new Hapi.Server(8080);
+    internals.http = new Hapi.Server();
+    internals.http.connection({ port: 8080 });
 
     internals.http.route([
         { method: 'GET', path: '/profile', handler: internals.profile },
@@ -71,9 +72,7 @@ internals.main = function () {
         { method: 'GET', path: '/request', handler: internals.requestBatch }
     ]);
 
-    internals.http.pack.register({
-        plugin: require('../')
-    }, function (err) {
+    internals.http.register(require('../'), function (err) {
 
         if (err) {
             console.log(err);
