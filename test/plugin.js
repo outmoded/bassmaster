@@ -58,6 +58,25 @@ describe('bassmaster', function () {
         });
     });
 
+    it('can be given an authentication strategy', function(done){
+
+        var server = new Hapi.Server();
+        var mockScheme = {
+          authenticate: function () {return null;},
+          payload: function() {return null;},
+          response: function() {return null;}
+        };
+        server.auth.scheme('mockScheme', function(){return mockScheme;});
+        server.auth.strategy('mockStrategy','mockScheme');
+        server.pack.register({ plugin: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
+
+            expect(err).to.not.exist;
+            var auth = server.table()[0].settings.auth.strategies[0];
+            expect(auth).to.equal('mockStrategy');
+            done();
+        });
+    });
+
     it('can be given custom tags', function(done){
 
         var server = new Hapi.Server();
