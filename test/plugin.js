@@ -1,8 +1,9 @@
 // Load modules
 
+var Code = require('code');
+var Bassmaster = require('../');
 var Lab = require('lab');
 var Hapi = require('hapi');
-var Bassmaster = require('../');
 
 
 // Declare internals
@@ -12,9 +13,10 @@ var internals = {};
 
 // Test shortcuts
 
-var expect = Lab.expect;
-var describe = Lab.experiment;
-var it = Lab.test;
+var lab = exports.lab = Lab.script();
+var describe = lab.describe;
+var it = lab.it;
+var expect = Code.expect;
 
 
 describe('bassmaster', function () {
@@ -22,9 +24,10 @@ describe('bassmaster', function () {
     it('can be added as a plugin to hapi', function (done) {
 
         var server = new Hapi.Server();
-        server.pack.register({ plugin: Bassmaster }, function (err) {
+        server.connection();
+        server.register({ register: Bassmaster }, function (err) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -32,10 +35,11 @@ describe('bassmaster', function () {
     it('can be given a custom route url', function (done) {
 
         var server = new Hapi.Server();
-        server.pack.register({ plugin: Bassmaster, options: { batchEndpoint: '/custom' }}, function (err) {
+        server.connection();
+        server.register({ register: Bassmaster, options: { batchEndpoint: '/custom' }}, function (err) {
 
-            expect(err).to.not.exist;
-            var path = server.table()[0].settings.path;
+            expect(err).to.not.exist();
+            var path = server.connections[0].table()[0].settings.path;
             expect(path).to.equal('/custom');
             done();
         });
@@ -44,10 +48,11 @@ describe('bassmaster', function () {
     it('can be given a custom description', function(done){
 
         var server = new Hapi.Server();
-        server.pack.register({ plugin: Bassmaster, options: { description: 'customDescription' }}, function (err) {
+        server.connection();
+        server.register({ register: Bassmaster, options: { description: 'customDescription' }}, function (err) {
 
-            expect(err).to.not.exist;
-            var description = server.table()[0].settings.description;
+            expect(err).to.not.exist();
+            var description = server.connections[0].table()[0].settings.description;
             expect(description).to.equal('customDescription');
             done();
         });
@@ -75,10 +80,11 @@ describe('bassmaster', function () {
     it('can be given custom tags', function(done){
 
         var server = new Hapi.Server();
-        server.pack.register({ plugin: Bassmaster, options: { tags: ['custom', 'tags'] }}, function (err) {
+        server.connection();
+        server.register({ register: Bassmaster, options: { tags: ['custom', 'tags'] }}, function (err) {
 
-            expect(err).to.not.exist;
-            var tags = server.table()[0].settings.tags;
+            expect(err).to.not.exist();
+            var tags = server.connections[0].table()[0].settings.tags;
             expect(tags).to.deep.equal(['custom', 'tags']);
             done();
         });
