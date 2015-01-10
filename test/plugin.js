@@ -39,7 +39,7 @@ describe('bassmaster', function () {
         server.register({ register: Bassmaster, options: { batchEndpoint: '/custom' }}, function (err) {
 
             expect(err).to.not.exist();
-            var path = server.connections[0].table()[0].settings.path;
+            var path = server.connections[0].table()[0].path;
             expect(path).to.equal('/custom');
             done();
         });
@@ -68,7 +68,7 @@ describe('bassmaster', function () {
         };
         server.auth.scheme('mockScheme', function(){return mockScheme;});
         server.auth.strategy('mockStrategy','mockScheme');
-        server.pack.register({ plugin: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
+        server.register({ plugin: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
 
             expect(err).to.not.exist;
             var auth = server.table()[0].settings.auth.strategies[0];
