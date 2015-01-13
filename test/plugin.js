@@ -61,6 +61,7 @@ describe('bassmaster', function () {
     it('can be given an authentication strategy', function(done){
 
         var server = new Hapi.Server();
+        server.connection();
         var mockScheme = {
           authenticate: function () {return null;},
           payload: function() {return null;},
@@ -68,10 +69,10 @@ describe('bassmaster', function () {
         };
         server.auth.scheme('mockScheme', function(){return mockScheme;});
         server.auth.strategy('mockStrategy','mockScheme');
-        server.register({ plugin: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
+        server.register({ register: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
 
-            expect(err).to.not.exist;
-            var auth = server.table()[0].settings.auth.strategies[0];
+            expect(err).to.not.exist();
+            var auth = server.connections[0].table()[0].settings.auth.strategies[0];
             expect(auth).to.equal('mockStrategy');
             done();
         });
