@@ -602,4 +602,17 @@ describe('Batch', function () {
             done();
         });
     });
+
+    it('works with multiple connections', function (done) {
+
+        // Add a connection to the server
+        server.connection({ port: 8000, host: 'localhost', labels: ['test'] });
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
+
+            expect(res.length).to.equal(1);
+            expect(res[0]).to.deep.equal({});
+            done();
+        });
+    });
 });
