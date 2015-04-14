@@ -16,9 +16,11 @@
     "hapi": ">=2.x.x"
   },
   "dependencies": {
+    "JSONPath": "^0.10.0",
     "async": "0.9.x",
     "boom": "2.x.x",
-    "hoek": "2.x.x"
+    "hoek": "2.x.x",
+    "traverse": "^0.6.6"
   },
   "devDependencies": {
     "code": "1.x.x",
