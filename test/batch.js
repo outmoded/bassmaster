@@ -578,4 +578,63 @@ describe('Batch', function () {
             done();
         });
     });
+
+    it('supports piping a whole payload to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$..[0]"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].id).to.equal('55cf687663');
+            expect(res[1].name).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('supports piping a partial payload to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$..[0].name"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1]).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('returns an empty object when a non-existent path is set at the root of the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$..[0].foo"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1]).to.be.empty();
+            done();
+        });
+    });
+
+    it('sets a nested reference in the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"name2": "$..[0].name"}} ] }', function (res) {
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].name2).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('returns an undefined property when a non-existent path is set in the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$..[0].foo"}} ] }', function (res) {
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].foo).to.be.undefined();
+            done();
+        });
+    });
 });
