@@ -45,7 +45,7 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given a custom description', function(done){
+    it('can be given a custom description', function (done){
 
         var server = new Hapi.Server();
         server.connection();
@@ -58,17 +58,17 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given an authentication strategy', function(done){
+    it('can be given an authentication strategy', function (done){
 
         var server = new Hapi.Server();
         server.connection();
         var mockScheme = {
-          authenticate: function () {return null;},
-          payload: function() {return null;},
-          response: function() {return null;}
+          authenticate: function () { return null; },
+          payload: function () { return null; },
+          response: function () { return null; }
         };
-        server.auth.scheme('mockScheme', function(){return mockScheme;});
-        server.auth.strategy('mockStrategy','mockScheme');
+        server.auth.scheme('mockScheme', function () { return mockScheme; });
+        server.auth.strategy('mockStrategy', 'mockScheme');
         server.register({ register: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
 
             expect(err).to.not.exist();
@@ -78,7 +78,7 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given custom tags', function(done){
+    it('can be given custom tags', function (done){
 
         var server = new Hapi.Server();
         server.connection();
