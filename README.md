@@ -6,7 +6,7 @@ The batch endpoint makes it easy to combine requests into a single one.  It also
 
 [![NPM](https://nodei.co/npm/bassmaster.png?downloads=true&stars=true)](https://nodei.co/npm/bassmaster/)
 
-Lead Maintainer: [Ben Acker](https://github.com/nvcexploder)
+Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
 
 
 ## Getting Started
