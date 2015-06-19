@@ -21,6 +21,7 @@ At this time the options object supports the following configuration:
 - `batchEndpoint` - the path where batch requests will be served from.  Default is '/batch'.
 - `description` - route description used for generating documentation. Default is 'A batch endpoint which makes it easy to combine multiple requests to other endpoints in a single call.'
 - `tags` - route tags used for generating documentation. Default is ['bassmaster']
+- `auth` - If you need the batch route to have authentication
 
 As an example to help explain the use of the endpoint, assume that the server has a route at '/currentuser' and '/users/{id}/profile/'.
 You can make a POST request to the batch endpoint with the following body and it will return an array with the current user and their profile.
