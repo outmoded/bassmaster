@@ -36,7 +36,7 @@ describe('bassmaster', function () {
 
         var server = new Hapi.Server();
         server.connection();
-        server.register({ register: Bassmaster, options: { batchEndpoint: '/custom' }}, function (err) {
+        server.register({ register: Bassmaster, options: { batchEndpoint: '/custom' } }, function (err) {
 
             expect(err).to.not.exist();
             var path = server.connections[0].table()[0].path;
@@ -45,11 +45,11 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given a custom description', function(done){
+    it('can be given a custom description', function (done){
 
         var server = new Hapi.Server();
         server.connection();
-        server.register({ register: Bassmaster, options: { description: 'customDescription' }}, function (err) {
+        server.register({ register: Bassmaster, options: { description: 'customDescription' } }, function (err) {
 
             expect(err).to.not.exist();
             var description = server.connections[0].table()[0].settings.description;
@@ -58,18 +58,30 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given an authentication strategy', function(done){
+    it('can be given an authentication strategy', function (done){
 
         var server = new Hapi.Server();
         server.connection();
         var mockScheme = {
-          authenticate: function () {return null;},
-          payload: function() {return null;},
-          response: function() {return null;}
+        authenticate: function () {
+
+            return null;
+        },
+        payload: function () {
+
+            return null;
+        },
+        response: function () {
+
+            return null;
+        }
         };
-        server.auth.scheme('mockScheme', function(){return mockScheme;});
-        server.auth.strategy('mockStrategy','mockScheme');
-        server.register({ register: Bassmaster, options: { auth: 'mockStrategy' }}, function (err) {
+        server.auth.scheme('mockScheme', function (){
+
+            return mockScheme;
+        });
+        server.auth.strategy('mockStrategy', 'mockScheme');
+        server.register({ register: Bassmaster, options: { auth: 'mockStrategy' } }, function (err) {
 
             expect(err).to.not.exist();
             var auth = server.connections[0].table()[0].settings.auth.strategies[0];
@@ -78,11 +90,11 @@ describe('bassmaster', function () {
         });
     });
 
-    it('can be given custom tags', function(done){
+    it('can be given custom tags', function (done){
 
         var server = new Hapi.Server();
         server.connection();
-        server.register({ register: Bassmaster, options: { tags: ['custom', 'tags'] }}, function (err) {
+        server.register({ register: Bassmaster, options: { tags: ['custom', 'tags'] } }, function (err) {
 
             expect(err).to.not.exist();
             var tags = server.connections[0].table()[0].settings.tags;
