@@ -79,6 +79,7 @@ internals.main = function () {
         }
         else {
             internals.http.start(function () {
+
                 console.log('Server started.');
             });
         }

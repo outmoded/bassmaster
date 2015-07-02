@@ -27,6 +27,7 @@ describe('Batch', function () {
     var server = null;
 
     var profileHandler = function (request, reply) {
+
         var id = request.query.id || 'fa0dbda9b1b';
 
         return reply({
@@ -152,16 +153,16 @@ describe('Batch', function () {
         server.route([
             { method: 'POST', path: '/echo', handler: echoHandler },
             { method: 'PUT', path: '/echo', handler: echoHandler },
-            { method: 'GET',  path: '/profile', handler: profileHandler },
-            { method: 'GET',  path: '/item', handler: activeItemHandler },
-            { method: 'GET',  path: '/item/{id}', handler: itemHandler },
-            { method: 'GET',  path: '/item2/{id?}', handler: item2Handler },
-            { method: 'GET',  path: '/zero', handler: zeroIntegerHandler },
-            { method: 'GET',  path: '/int', handler: integerHandler },
-            { method: 'GET',  path: '/int/{id}', handler: integerItemHandler },
-            { method: 'GET',  path: '/error', handler: errorHandler },
-            { method: 'GET',  path: '/badchar', handler: badCharHandler },
-            { method: 'GET',  path: '/badvalue', handler: badValueHandler },
+            { method: 'GET', path: '/profile', handler: profileHandler },
+            { method: 'GET', path: '/item', handler: activeItemHandler },
+            { method: 'GET', path: '/item/{id}', handler: itemHandler },
+            { method: 'GET', path: '/item2/{id?}', handler: item2Handler },
+            { method: 'GET', path: '/zero', handler: zeroIntegerHandler },
+            { method: 'GET', path: '/int', handler: integerHandler },
+            { method: 'GET', path: '/int/{id}', handler: integerItemHandler },
+            { method: 'GET', path: '/error', handler: errorHandler },
+            { method: 'GET', path: '/badchar', handler: badCharHandler },
+            { method: 'GET', path: '/badvalue', handler: badValueHandler },
             {
                 method: 'GET',
                 path: '/fetch',
@@ -221,6 +222,7 @@ describe('Batch', function () {
     });
 
     it('supports query string in the request', function (done) {
+
         makeRequest('{ "requests": [{ "method": "get", "path": "/profile?id=someid" }] }', function (res) {
 
             expect(res[0].id).to.equal('someid');
@@ -231,6 +233,7 @@ describe('Batch', function () {
     });
 
     it('supports non alphanum characters in the request', function (done) {
+
         makeRequest('{ "requests": [{ "method": "get", "path": "/item/item-_^~&-end" }] }', function (res) {
 
             expect(res[0].id).to.equal('item-_^~&-end');
@@ -405,8 +408,8 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.deep.equal({a:1});
-            expect(res[1]).to.deep.equal({a:2});
+            expect(res[0]).to.deep.equal({ a: 1 });
+            expect(res[1]).to.deep.equal({ a: 2 });
             done();
         });
     });
@@ -416,8 +419,8 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "payload":{"a":1}}, {"method": "put", "path": "/echo", "payload":{"a":2}}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.deep.equal({a:1});
-            expect(res[1]).to.deep.equal({a:2});
+            expect(res[0]).to.deep.equal({ a: 1 });
+            expect(res[1]).to.deep.equal({ a: 2 });
             done();
         });
     });
@@ -439,7 +442,7 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":null}] }', function (res) {
 
             expect(res.length).to.equal(2);
-            expect(res[0]).to.deep.equal({a:1});
+            expect(res[0]).to.deep.equal({ a: 1 });
             expect(res[1]).to.deep.equal({});
             done();
         });
@@ -549,7 +552,7 @@ describe('Batch', function () {
 
     it('supports an optional query object', function (done) {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "someid" } }] }', function(res){
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "someid" } }] }', function (res) {
 
             expect(res[0].id).to.equal('someid');
             expect(res[0].name).to.equal('John Doe');
@@ -560,7 +563,7 @@ describe('Batch', function () {
 
     it('supports alphanum characters in the query', function (done) {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "item-_^~&-end" } }] }', function(res){
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "item-_^~&-end" } }] }', function (res) {
 
             expect(res[0].id).to.equal('item-_^~&-end');
             expect(res[0].name).to.equal('John Doe');
