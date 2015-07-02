@@ -29,5 +29,5 @@
   "scripts": {
     "test": "make test-cov"
   },
-  "license": "BSD"
+  "license": "BSD-3-Clause"
 }
