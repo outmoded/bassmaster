@@ -29,10 +29,5 @@
   "scripts": {
     "test": "make test-cov"
   },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "http://github.com/hapijs/bassmaster/raw/master/LICENSE"
-    }
-  ]
+  "license": "BSD-3-Clause"
 }
