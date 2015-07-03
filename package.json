@@ -16,7 +16,7 @@
     "hapi": ">=2.x.x"
   },
   "dependencies": {
-    "async": "0.9.x",
+    "async": "1.3.x",
     "boom": "2.x.x",
     "hoek": "2.x.x"
   },
