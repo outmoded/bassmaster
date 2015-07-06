@@ -25,6 +25,7 @@ At this time the options object supports the following configuration:
 
 As an example to help explain the use of the endpoint, assume that the server has a route at '/currentuser' and '/users/{id}/profile/'.
 You can make a POST request to the batch endpoint with the following body and it will return an array with the current user and their profile.
+Pipelining uses [Hoek.reach](https://www.npmjs.com/package/hoek#reach-obj-chain-options) to retrieve values from request results.
 
 ```json
 { "requests": [
