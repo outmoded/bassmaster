@@ -60,6 +60,15 @@ describe('Batch', function () {
         });
     };
 
+    var arrayHandler = function (request, reply) {
+
+        return reply({
+            'id': '55cf687663',
+            'name': 'Dress',
+            'items': [{ 'color': 'blackandblue' }, { 'color': 'whiteandgold' }]
+        });
+    };
+
     var zeroIntegerHandler = function (request, reply) {
 
         return reply({
@@ -155,6 +164,7 @@ describe('Batch', function () {
             { method: 'PUT', path: '/echo', handler: echoHandler },
             { method: 'GET', path: '/profile', handler: profileHandler },
             { method: 'GET', path: '/item', handler: activeItemHandler },
+            { method: 'GET', path: '/array', handler: arrayHandler },
             { method: 'GET', path: '/item/{id}', handler: itemHandler },
             { method: 'GET', path: '/item2/{id?}', handler: item2Handler },
             { method: 'GET', path: '/zero', handler: zeroIntegerHandler },
@@ -624,6 +634,18 @@ describe('Batch', function () {
             expect(res[0].id).to.equal('55cf687663');
             expect(res[0].name).to.equal('Active Item');
             expect(res[1]).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('supports piping a partial payload from a nested array to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/array"}, {"method": "post", "path": "/echo", "payload":"$0.items.1"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Dress');
+            expect(res[1].color).to.equal('whiteandgold');
             done();
         });
     });
