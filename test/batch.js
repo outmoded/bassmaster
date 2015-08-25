@@ -674,7 +674,7 @@ describe('Batch', function () {
         });
     });
 
-    it('returns an undefined property when a non-existent path is set in the payload', function (done) {
+    it('returns an undefined property when a nonexistent path is set in the payload', function (done) {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$0.foo"}} ] }', function (res) {
 
@@ -682,6 +682,21 @@ describe('Batch', function () {
             expect(res[0].id).to.equal('55cf687663');
             expect(res[0].name).to.equal('Active Item');
             expect(res[1].foo).to.be.undefined();
+
+            done();
+        });
+    });
+
+    it('works with multiple connections', function (done) {
+
+        // Add a connection to the server
+        server.connection({ port: 8000, host: 'localhost', labels: ['test'] });
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
+
+            expect(res.length).to.equal(1);
+            expect(res[0]).to.deep.equal({});
+
             done();
         });
     });
