@@ -3,7 +3,7 @@
   "description": "Batch processing plugin for hapi",
   "repository": "git://github.com/hapijs/bassmaster",
   "version": "1.8.0",
-  "main": "index",
+  "main": "lib/index.js",
   "keywords": [
     "hapi",
     "plugin",
@@ -23,11 +23,12 @@
   "devDependencies": {
     "code": "1.x.x",
     "hapi": "8.x.x",
-    "lab": "5.x.x",
+    "lab": "6.x.x",
     "sinon": "1.x.x"
   },
   "scripts": {
-    "test": "make test-cov"
+    "test": "lab -r console -t 100 -a code -L",
+    "test-cov-html": "lab -r html -o coverage.html -a code -L"
   },
   "license": "BSD-3-Clause"
 }
