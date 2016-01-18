@@ -60,6 +60,15 @@ describe('Batch', function () {
         });
     };
 
+    var arrayHandler = function (request, reply) {
+
+        return reply({
+            'id': '55cf687663',
+            'name': 'Dress',
+            'items': [{ 'color': 'blackandblue' }, { 'color': 'whiteandgold' }]
+        });
+    };
+
     var zeroIntegerHandler = function (request, reply) {
 
         return reply({
@@ -155,6 +164,7 @@ describe('Batch', function () {
             { method: 'PUT', path: '/echo', handler: echoHandler },
             { method: 'GET', path: '/profile', handler: profileHandler },
             { method: 'GET', path: '/item', handler: activeItemHandler },
+            { method: 'GET', path: '/array', handler: arrayHandler },
             { method: 'GET', path: '/item/{id}', handler: itemHandler },
             { method: 'GET', path: '/item2/{id?}', handler: item2Handler },
             { method: 'GET', path: '/zero', handler: zeroIntegerHandler },
@@ -603,6 +613,80 @@ describe('Batch', function () {
         });
     });
 
+    it('supports piping a whole payload to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].id).to.equal('55cf687663');
+            expect(res[1].name).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('supports piping a partial payload to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.name"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1]).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('supports piping a partial payload from a nested array to the next request', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/array"}, {"method": "post", "path": "/echo", "payload":"$0.items.1"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Dress');
+            expect(res[1].color).to.equal('whiteandgold');
+            done();
+        });
+    });
+
+    it('returns an empty object when a non-existent path is set at the root of the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.foo"} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1]).to.be.empty();
+            done();
+        });
+    });
+
+    it('sets a nested reference in the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"name2": "$0.name"}} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].name2).to.equal('Active Item');
+            done();
+        });
+    });
+
+    it('returns an undefined property when a nonexistent path is set in the payload', function (done) {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$0.foo"}} ] }', function (res) {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Active Item');
+            expect(res[1].foo).to.be.undefined();
+
+            done();
+        });
+    });
+
     it('works with multiple connections', function (done) {
 
         // Add a connection to the server
@@ -612,6 +696,7 @@ describe('Batch', function () {
 
             expect(res.length).to.equal(1);
             expect(res[0]).to.deep.equal({});
+
             done();
         });
     });
