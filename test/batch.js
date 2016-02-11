@@ -491,6 +491,25 @@ describe('Batch', function () {
         });
     });
 
+
+    it('handles empty payload', function (done) {
+
+        makeRequest(null, function (res) {
+
+            expect(res.statusCode).to.equal(400);
+            done();
+        });
+    });
+
+    it('handles payload request not array', function (done) {
+
+        makeRequest('{ "requests": {"method": "get", "path": "/$1"} }', function (res) {
+
+            expect(res.statusCode).to.equal(400);
+            done();
+        });
+    });
+
     it('handles bad paths in requests array', function (done) {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/$1"}] }', function (res) {
