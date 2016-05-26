@@ -1,11 +1,13 @@
+'use strict';
+
 // Load modules
 
-var Hapi = require('hapi');
+const Hapi = require('hapi');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 /**
@@ -53,7 +55,7 @@ internals.requestBatch = function (request, reply) {
         method: 'POST',
         url: '/batch',
         payload: '{ "requests": [{ "method": "get", "path": "/profile" }, { "method": "get", "path": "/item" }, { "method": "get", "path": "/item/$1.id" }] }'
-    }, function (res) {
+    }, (res) => {
 
         reply(res.result);
     });
@@ -72,16 +74,13 @@ internals.main = function () {
         { method: 'GET', path: '/request', handler: internals.requestBatch }
     ]);
 
-    internals.http.register(require('../'), function (err) {
+    internals.http.register(require('../'), (err) => {
 
         if (err) {
             console.log(err);
         }
         else {
-            internals.http.start(function () {
-
-                console.log('Server started.');
-            });
+            internals.http.start(() => console.log('Server started.'));
         }
     });
 };
