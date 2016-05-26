@@ -1,34 +1,36 @@
+'use strict';
+
 // Load modules
 
-var Async = require('async');
-var Bassmaster = require('../');
-var Code = require('code');
-var Hapi = require('hapi');
-var Lab = require('lab');
-var Sinon = require('sinon');
+const Async = require('async');
+const Bassmaster = require('../');
+const Code = require('code');
+const Hapi = require('hapi');
+const Lab = require('lab');
+const Sinon = require('sinon');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var before = lab.before;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const before = lab.before;
+const expect = Code.expect;
 
 
-describe('Batch', function () {
+describe('Batch', () => {
 
-    var server = null;
+    let server = null;
 
-    var profileHandler = function (request, reply) {
+    const profileHandler = function (request, reply) {
 
-        var id = request.query.id || 'fa0dbda9b1b';
+        const id = request.query.id || 'fa0dbda9b1b';
 
         return reply({
             'id': id,
@@ -36,7 +38,7 @@ describe('Batch', function () {
         });
     };
 
-    var activeItemHandler = function (request, reply) {
+    const activeItemHandler = function (request, reply) {
 
         return reply({
             'id': '55cf687663',
@@ -44,7 +46,7 @@ describe('Batch', function () {
         });
     };
 
-    var itemHandler = function (request, reply) {
+    const itemHandler = function (request, reply) {
 
         return reply({
             'id': request.params.id,
@@ -52,7 +54,7 @@ describe('Batch', function () {
         });
     };
 
-    var item2Handler = function (request, reply) {
+    const item2Handler = function (request, reply) {
 
         return reply({
             'id': request.params.id || 'mystery-guest',
@@ -60,7 +62,7 @@ describe('Batch', function () {
         });
     };
 
-    var arrayHandler = function (request, reply) {
+    const arrayHandler = function (request, reply) {
 
         return reply({
             'id': '55cf687663',
@@ -69,7 +71,7 @@ describe('Batch', function () {
         });
     };
 
-    var zeroIntegerHandler = function (request, reply) {
+    const zeroIntegerHandler = function (request, reply) {
 
         return reply({
             'id': 0,
@@ -77,7 +79,7 @@ describe('Batch', function () {
         });
     };
 
-    var integerHandler = function (request, reply) {
+    const integerHandler = function (request, reply) {
 
         return reply({
             'id': 123,
@@ -85,7 +87,7 @@ describe('Batch', function () {
         });
     };
 
-    var integerItemHandler = function (request, reply) {
+    const integerItemHandler = function (request, reply) {
 
         return reply({
             'id': request.params.id,
@@ -93,7 +95,7 @@ describe('Batch', function () {
         });
     };
 
-    var badCharHandler = function (request, reply) {
+    const badCharHandler = function (request, reply) {
 
         return reply({
             'id': 'test',
@@ -102,59 +104,60 @@ describe('Batch', function () {
         });
     };
 
-    var badValueHandler = function (request, reply) {
+    const badValueHandler = function (request, reply) {
 
         return reply(null);
     };
 
-    var redirectHandler = function (request, reply) {
+    const redirectHandler = function (request, reply) {
 
         return reply().redirect('/profile');
     };
 
-    var fetch1 = function (request, next) {
+    const fetch1 = function (request, next) {
 
         next('Hello');
     };
 
-    var fetch2 = function (request, next) {
+    const fetch2 = function (request, next) {
 
         next(request.pre.m1 + request.pre.m3 + request.pre.m4);
     };
 
-    var fetch3 = function (request, next) {
+    const fetch3 = function (request, next) {
 
-        process.nextTick(function () {
+        process.nextTick(() => {
 
             next(' ');
         });
     };
 
-    var fetch4 = function (request, next) {
+    const fetch4 = function (request, next) {
 
         next('World');
     };
 
-    var fetch5 = function (request, next) {
+    const fetch5 = function (request, next) {
 
         next(request.pre.m2 + '!');
     };
 
-    var getFetch = function (request, reply) {
+    const getFetch = function (request, reply) {
 
         return reply(request.pre.m5 + '\n');
     };
 
-    var errorHandler = function (request, reply) {
+    const errorHandler = function (request, reply) {
 
         return reply(new Error('myerror'));
     };
 
-    var echoHandler = function (request, reply) {
+    const echoHandler = function (request, reply) {
+
         return reply(request.payload);
     };
 
-    var setupServer = function (done) {
+    const setupServer = function (done) {
 
         server = new Hapi.Server();
         server.connection();
@@ -192,9 +195,9 @@ describe('Batch', function () {
         server.register(Bassmaster, done);
     };
 
-    var makeRequest = function (payload, callback) {
+    const makeRequest = function (payload, callback) {
 
-        var next = function (res) {
+        const next = function (res) {
 
             return callback(res.result);
         };
@@ -208,20 +211,9 @@ describe('Batch', function () {
 
     before(setupServer);
 
-    it('shows single response when making request for single endpoint', function (done) {
+    it('shows single response when making request for single endpoint', (done) => {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile" }] }', function (res) {
-
-            expect(res[0].id).to.equal('fa0dbda9b1b');
-            expect(res[0].name).to.equal('John Doe');
-            expect(res.length).to.equal(1);
-            done();
-        });
-    });
-
-    it('supports redirect', function (done) {
-
-        makeRequest('{ "requests": [{ "method": "get", "path": "/redirect" }] }', function (res) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile" }] }', (res) => {
 
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
@@ -230,9 +222,20 @@ describe('Batch', function () {
         });
     });
 
-    it('supports query string in the request', function (done) {
+    it('supports redirect', (done) => {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile?id=someid" }] }', function (res) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/redirect" }] }', (res) => {
+
+            expect(res[0].id).to.equal('fa0dbda9b1b');
+            expect(res[0].name).to.equal('John Doe');
+            expect(res.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('supports query string in the request', (done) => {
+
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile?id=someid" }] }', (res) => {
 
             expect(res[0].id).to.equal('someid');
             expect(res[0].name).to.equal('John Doe');
@@ -241,9 +244,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports non alphanum characters in the request', function (done) {
+    it('supports non alphanum characters in the request', (done) => {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/item/item-_^~&-end" }] }', function (res) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/item/item-_^~&-end" }] }', (res) => {
 
             expect(res[0].id).to.equal('item-_^~&-end');
             expect(res[0].name).to.equal('Item');
@@ -252,9 +255,9 @@ describe('Batch', function () {
         });
     });
 
-    it('shows two ordered responses when requesting two endpoints', function (done) {
+    it('shows two ordered responses when requesting two endpoints', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/profile"}, {"method": "get", "path": "/item"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/profile"}, {"method": "get", "path": "/item"}] }', (res) => {
 
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
@@ -265,9 +268,9 @@ describe('Batch', function () {
         });
     });
 
-    it('shows two ordered responses when requesting two endpoints (with optional path param)', function (done) {
+    it('shows two ordered responses when requesting two endpoints (with optional path param)', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/item2/john"}, {"method": "get", "path": "/item2/"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/item2/john"}, {"method": "get", "path": "/item2/"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('john');
@@ -276,9 +279,9 @@ describe('Batch', function () {
         });
     });
 
-    it('handles a large number of batch requests in parallel', function (done) {
+    it('handles a large number of batch requests in parallel', (done) => {
 
-        var requestBody = '{ "requests": [{"method": "get", "path": "/profile"},' +
+        const requestBody = '{ "requests": [{"method": "get", "path": "/profile"},' +
             '{"method": "get", "path": "/item"},' +
             '{"method": "get", "path": "/profile"},' +
             '{"method": "get", "path": "/item"},' +
@@ -360,8 +363,8 @@ describe('Batch', function () {
             '{"method": "get", "path": "/fetch"}' +
             '] }';
 
-        var asyncSpy = Sinon.spy(Async, 'parallel');
-        makeRequest(requestBody, function (res) {
+        const asyncSpy = Sinon.spy(Async, 'parallel');
+        makeRequest(requestBody, (res) => {
 
             expect(res[0].id).to.equal('fa0dbda9b1b');
             expect(res[0].name).to.equal('John Doe');
@@ -373,9 +376,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a response into the next request', function (done) {
+    it('supports piping a response into the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -386,9 +389,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping integer response into the next request', function (done) {
+    it('supports piping integer response into the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal(123);
@@ -399,9 +402,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a zero integer response into the next request', function (done) {
+    it('supports piping a zero integer response into the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "get", "path": "/int/$0.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "get", "path": "/int/$0.id"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal(0);
@@ -412,20 +415,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports posting multiple requests', function (done) {
+    it('supports posting multiple requests', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', function (res) {
-
-            expect(res.length).to.equal(2);
-            expect(res[0]).to.deep.equal({ a: 1 });
-            expect(res[1]).to.deep.equal({ a: 2 });
-            done();
-        });
-    });
-
-    it('supports sending multiple PUTs requests', function (done) {
-
-        makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "payload":{"a":1}}, {"method": "put", "path": "/echo", "payload":{"a":2}}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":{"a":2}}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0]).to.deep.equal({ a: 1 });
@@ -434,9 +426,20 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a response from post into the next get request', function (done) {
+    it('supports sending multiple PUTs requests', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": {"id":"55cf687663"}}, {"method": "get", "path": "/item/$0.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "put", "path": "/echo", "payload":{"a":1}}, {"method": "put", "path": "/echo", "payload":{"a":2}}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0]).to.deep.equal({ a: 1 });
+            expect(res[1]).to.deep.equal({ a: 2 });
+            done();
+        });
+    });
+
+    it('supports piping a response from post into the next get request', (done) => {
+
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": {"id":"55cf687663"}}, {"method": "get", "path": "/item/$0.id"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -446,9 +449,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a nested response value from post into the next get request', function (done) {
+    it('supports piping a nested response value from post into the next get request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": { "data": {"id":"44cf687663"}}}, {"method": "get", "path": "/item/$0.data.id"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": { "data": {"id":"44cf687663"}}}, {"method": "get", "path": "/item/$0.data.id"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].data.id).to.equal('44cf687663');
@@ -458,9 +461,9 @@ describe('Batch', function () {
         });
     });
 
-    it('handles null payloads gracefully', function (done) {
+    it('handles null payloads gracefully', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":null}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload":{"a":1}}, {"method": "post", "path": "/echo", "payload":null}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0]).to.deep.equal({ a: 1 });
@@ -469,9 +472,9 @@ describe('Batch', function () {
         });
     });
 
-    it('includes errors when they occur in the request', function (done) {
+    it('includes errors when they occur in the request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/nothere"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/nothere"}] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -481,127 +484,127 @@ describe('Batch', function () {
         });
     });
 
-    it('bad requests return the correct error', function (done) {
+    it('bad requests return the correct error', (done) => {
 
-        makeRequest('{ "blah": "test" }', function (res) {
-
-            expect(res.statusCode).to.equal(400);
-            done();
-        });
-    });
-
-
-    it('handles empty payload', function (done) {
-
-        makeRequest(null, function (res) {
+        makeRequest('{ "blah": "test" }', (res) => {
 
             expect(res.statusCode).to.equal(400);
             done();
         });
     });
 
-    it('handles payload request not array', function (done) {
 
-        makeRequest('{ "requests": {"method": "get", "path": "/$1"} }', function (res) {
+    it('handles empty payload', (done) => {
 
-            expect(res.statusCode).to.equal(400);
-            done();
-        });
-    });
-
-    it('handles bad paths in requests array', function (done) {
-
-        makeRequest('{ "requests": [ {"method": "get", "path": "/$1"}] }', function (res) {
+        makeRequest(null, (res) => {
 
             expect(res.statusCode).to.equal(400);
             done();
         });
     });
 
-    it('handles errors in the requested handlers', function (done) {
+    it('handles payload request not array', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/error"}] }', function (res) {
+        makeRequest('{ "requests": {"method": "get", "path": "/$1"} }', (res) => {
+
+            expect(res.statusCode).to.equal(400);
+            done();
+        });
+    });
+
+    it('handles bad paths in requests array', (done) => {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/$1"}] }', (res) => {
+
+            expect(res.statusCode).to.equal(400);
+            done();
+        });
+    });
+
+    it('handles errors in the requested handlers', (done) => {
+
+        makeRequest('{ "requests": [ {"method": "get", "path": "/error"}] }', (res) => {
 
             expect(res[0].statusCode).to.equal(500);
             done();
         });
     });
 
-    it('an out of bounds reference returns an error', function (done) {
+    it('an out of bounds reference returns an error', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$1.id"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$1.id"}] }', (res) => {
 
             expect(res.error).to.equal('Bad Request');
             done();
         });
     });
 
-    it('a non-existant reference returns an internal error', function (done) {
+    it('a non-existant reference returns an internal error', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.nothere"}] }', function (res) {
-
-            expect(res.statusCode).to.equal(500);
-            done();
-        });
-    });
-
-    it('a non-existant & nested reference returns an internal error', function (done) {
-
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": { "data": {"id":"44cf687663"}}}, {"method": "get", "path": "/item/$0.data.not.here"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.nothere"}] }', (res) => {
 
             expect(res.statusCode).to.equal(500);
             done();
         });
     });
 
-    it('handles a bad character in the reference value', function (done) {
+    it('a non-existant & nested reference returns an internal error', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.invalidChar"}] }', function (res) {
-
-            expect(res.statusCode).to.equal(500);
-            done();
-        });
-    });
-
-    it('handles a null value in the reference value', function (done) {
-
-        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.null"}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "payload": { "data": {"id":"44cf687663"}}}, {"method": "get", "path": "/item/$0.data.not.here"}] }', (res) => {
 
             expect(res.statusCode).to.equal(500);
             done();
         });
     });
 
-    it('cannot use invalid character to request reference', function (done) {
+    it('handles a bad character in the reference value', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$:.name"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.invalidChar"}] }', (res) => {
+
+            expect(res.statusCode).to.equal(500);
+            done();
+        });
+    });
+
+    it('handles a null value in the reference value', (done) => {
+
+        makeRequest('{ "requests": [{"method": "get", "path": "/badchar"}, {"method": "get", "path": "/item/$0.null"}] }', (res) => {
+
+            expect(res.statusCode).to.equal(500);
+            done();
+        });
+    });
+
+    it('cannot use invalid character to request reference', (done) => {
+
+        makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$:.name"}] }', (res) => {
 
             expect(res.statusCode).to.equal(400);
             done();
         });
     });
 
-    it('handles missing reference', function (done) {
+    it('handles missing reference', (done) => {
 
-        makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$0.name"}] }', function (res) {
-
-            expect(res.statusCode).to.equal(500);
-            done();
-        });
-    });
-
-    it('handles error when getting reference value', function (done) {
-
-        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.1"}] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/badvalue"}, {"method": "get", "path": "/item/$0.name"}] }', (res) => {
 
             expect(res.statusCode).to.equal(500);
             done();
         });
     });
 
-    it('supports an optional query object', function (done) {
+    it('handles error when getting reference value', (done) => {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "someid" } }] }', function (res) {
+        makeRequest('{ "requests": [{"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.1"}] }', (res) => {
+
+            expect(res.statusCode).to.equal(500);
+            done();
+        });
+    });
+
+    it('supports an optional query object', (done) => {
+
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "someid" } }] }', (res) => {
 
             expect(res[0].id).to.equal('someid');
             expect(res[0].name).to.equal('John Doe');
@@ -610,9 +613,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports alphanum characters in the query', function (done) {
+    it('supports alphanum characters in the query', (done) => {
 
-        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "item-_^~&-end" } }] }', function (res) {
+        makeRequest('{ "requests": [{ "method": "get", "path": "/profile", "query": { "id": "item-_^~&-end" } }] }', (res) => {
 
             expect(res[0].id).to.equal('item-_^~&-end');
             expect(res[0].name).to.equal('John Doe');
@@ -621,9 +624,9 @@ describe('Batch', function () {
         });
     });
 
-    it('handles null queries gracefully', function (done) {
+    it('handles null queries gracefully', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', (res) => {
 
             expect(res.length).to.equal(1);
             expect(res[0]).to.deep.equal(null);
@@ -631,9 +634,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a whole payload to the next request', function (done) {
+    it('supports piping a whole payload to the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0"} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0"} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -644,9 +647,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a partial payload to the next request', function (done) {
+    it('supports piping a partial payload to the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.name"} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.name"} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -656,9 +659,9 @@ describe('Batch', function () {
         });
     });
 
-    it('supports piping a partial payload from a nested array to the next request', function (done) {
+    it('supports piping a partial payload from a nested array to the next request', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/array"}, {"method": "post", "path": "/echo", "payload":"$0.items.1"} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/array"}, {"method": "post", "path": "/echo", "payload":"$0.items.1"} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -668,9 +671,9 @@ describe('Batch', function () {
         });
     });
 
-    it('returns an empty object when a non-existent path is set at the root of the payload', function (done) {
+    it('returns an empty object when a non-existent path is set at the root of the payload', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.foo"} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":"$0.foo"} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -680,9 +683,9 @@ describe('Batch', function () {
         });
     });
 
-    it('sets a nested reference in the payload', function (done) {
+    it('sets a nested reference in the payload', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"name2": "$0.name"}} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"name2": "$0.name"}} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -692,9 +695,9 @@ describe('Batch', function () {
         });
     });
 
-    it('returns an empty object when a nonexistent path is set in the payload', function (done) {
+    it('returns an empty object when a nonexistent path is set in the payload', (done) => {
 
-        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$0.foo"}} ] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$0.foo"}} ] }', (res) => {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
@@ -705,12 +708,12 @@ describe('Batch', function () {
         });
     });
 
-    it('works with multiple connections', function (done) {
+    it('works with multiple connections', (done) => {
 
         // Add a connection to the server
         server.connection({ port: 8000, host: 'localhost', labels: ['test'] });
 
-        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
+        makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', (res) => {
 
             expect(res.length).to.equal(1);
             expect(res[0]).to.deep.equal(null);
