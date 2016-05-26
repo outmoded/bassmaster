@@ -151,7 +151,6 @@ describe('Batch', function () {
     };
 
     var echoHandler = function (request, reply) {
-
         return reply(request.payload);
     };
 
@@ -200,7 +199,7 @@ describe('Batch', function () {
             return callback(res.result);
         };
 
-        server.inject({
+        server.connections[0].inject({
             method: 'post',
             url: '/batch',
             payload: payload
@@ -465,7 +464,7 @@ describe('Batch', function () {
 
             expect(res.length).to.equal(2);
             expect(res[0]).to.deep.equal({ a: 1 });
-            expect(res[1]).to.deep.equal({});
+            expect(res[1]).to.deep.equal(null);
             done();
         });
     });
@@ -627,7 +626,7 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
 
             expect(res.length).to.equal(1);
-            expect(res[0]).to.deep.equal({});
+            expect(res[0]).to.deep.equal(null);
             done();
         });
     });
@@ -693,14 +692,14 @@ describe('Batch', function () {
         });
     });
 
-    it('returns an undefined property when a nonexistent path is set in the payload', function (done) {
+    it('returns an empty object when a nonexistent path is set in the payload', function (done) {
 
         makeRequest('{ "requests": [ {"method": "get", "path": "/item"}, {"method": "post", "path": "/echo", "payload":{"foo": "$0.foo"}} ] }', function (res) {
 
             expect(res.length).to.equal(2);
             expect(res[0].id).to.equal('55cf687663');
             expect(res[0].name).to.equal('Active Item');
-            expect(res[1].foo).to.be.undefined();
+            expect(res[1].foo).to.be.empty();
 
             done();
         });
@@ -714,7 +713,7 @@ describe('Batch', function () {
         makeRequest('{ "requests": [ {"method": "post", "path": "/echo", "query": null}] }', function (res) {
 
             expect(res.length).to.equal(1);
-            expect(res[0]).to.deep.equal({});
+            expect(res[0]).to.deep.equal(null);
 
             done();
         });
