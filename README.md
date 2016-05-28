@@ -1,6 +1,6 @@
 ![bassmaster Logo](https://raw.github.com/spumko/bassmaster/master/images/bassmaster.png)
 
-Bassmaster makes it easy to combine requests into a single one. It also supports pipelining, allowing you to take the result of one query in the batch request and use it in a subsequent endpoint.  The batch endpoint only responds to POST requests.
+Bassmaster makes it easy to combine requests into a single one. It also supports pipelining, allowing you to take the result of one query in the batch request and use it in a subsequent one.  The batch endpoint only responds to POST requests.
 
 [![Build Status](https://secure.travis-ci.org/hapijs/bassmaster.png)](http://travis-ci.org/hapijs/bassmaster)
 
