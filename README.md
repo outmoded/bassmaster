@@ -1,6 +1,6 @@
 ![bassmaster Logo](https://raw.github.com/spumko/bassmaster/master/images/bassmaster.png)
 
-The batch endpoint makes it easy to combine requests into a single one.  It also supports pipelining so you are able to take the result of one of the endpoints in the batch request and use it in a subsequent endpoint.  The batch endpoint only responds to POST requests.
+Bassmaster makes it easy to combine requests into a single one. It also supports pipelining, allowing you to take the result of one query in the batch request and use it in a subsequent endpoint.  The batch endpoint only responds to POST requests.
 
 [![Build Status](https://secure.travis-ci.org/hapijs/bassmaster.png)](http://travis-ci.org/hapijs/bassmaster)
 
@@ -11,10 +11,6 @@ Lead Maintainer: [Christopher De Cairos](https://github.com/cadecairos)
 
 ## Getting Started
 Install **bassmaster** by either running `npm install bassmaster` in your sites working directory or add 'bassmaster' to the dependencies section of the 'package.json' file and run `npm install`.
-
-### Required permissions
-**bassmaster** requires the following permissions to be granted on the server for the plugin to work correctly:
-- route
 
 ### Available options
 At this time the options object supports the following configuration:

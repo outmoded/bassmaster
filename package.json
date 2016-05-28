@@ -10,7 +10,7 @@
     "batch"
   ],
   "engines": {
-    "node": ">=0.10.32"
+    "node": ">=4.4.5"
   },
   "dependencies": {
     "async": "1.x.x",
