@@ -216,6 +216,19 @@ describe('Batch', () => {
         });
     });
 
+    it('supports the return of strings instead of json', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/string"}, {"method": "get", "path": "/item/$0.id"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('String Item');
+            expect(res[1].id).to.equal('55cf687663');
+            expect(res[1].name).to.equal('Item');
+            done();
+        });
+    });
+
     it('supports piping a zero integer response into the next request', (done) => {
 
         Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "get", "path": "/int/$0.id"}] }', (res) => {
