@@ -70,6 +70,14 @@ const integerItemHandler = function (request, reply) {
     });
 };
 
+const stringItemHandler = function (request, reply) {
+
+    return reply('{' +
+        '"id": "55cf687663",' +
+        '"name": "String Item"' +
+    '}');
+};
+
 const badCharHandler = function (request, reply) {
 
     return reply({
@@ -147,6 +155,7 @@ module.exports.setupServer = function (done) {
         { method: 'GET', path: '/zero', handler: zeroIntegerHandler },
         { method: 'GET', path: '/int', handler: integerHandler },
         { method: 'GET', path: '/int/{id}', handler: integerItemHandler },
+        { method: 'GET', path: '/string', handler: stringItemHandler },
         { method: 'GET', path: '/error', handler: errorHandler },
         { method: 'GET', path: '/badchar', handler: badCharHandler },
         { method: 'GET', path: '/badvalue', handler: badValueHandler },
