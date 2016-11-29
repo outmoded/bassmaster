@@ -29,6 +29,31 @@ const itemHandler = function (request, reply) {
     });
 };
 
+const deepItemHandler = function (request, reply) {
+
+    return reply({
+        'id': '55cf687663',
+        'name': 'Deep Item',
+        'inner': {
+            'name': 'Level 1',
+            'inner': {
+                'name': 'Level 2',
+                'inner': {
+                    'name': 'Level 3',
+                    'array': [
+                        {
+                            'name': 'Array Item 0'
+                        },
+                        {
+                            'name': 'Array Item 1'
+                        }
+                    ]
+                }
+            }
+        }
+    });
+};
+
 const item2Handler = function (request, reply) {
 
     return reply({
@@ -149,6 +174,7 @@ module.exports.setupServer = function (done) {
         { method: 'PUT', path: '/echo', handler: echoHandler },
         { method: 'GET', path: '/profile', handler: profileHandler },
         { method: 'GET', path: '/item', handler: activeItemHandler },
+        { method: 'GET', path: '/deepItem', handler: deepItemHandler },
         { method: 'GET', path: '/array', handler: arrayHandler },
         { method: 'GET', path: '/item/{id}', handler: itemHandler },
         { method: 'GET', path: '/item2/{id?}', handler: item2Handler },

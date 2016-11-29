@@ -203,6 +203,32 @@ describe('Batch', () => {
         });
     });
 
+    it('supports piping a deep response into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/deepItem"}, {"method": "post", "path": "/echo", "payload": "$0.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.inner.name"}] }', (res) => {
+
+            expect(res.length).to.equal(4);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Deep Item');
+            expect(res[1]).to.equal('Level 1');
+            expect(res[2]).to.equal('Level 2');
+            expect(res[3]).to.equal('Level 3');
+            done();
+        });
+    });
+
+    it('supports piping a deep response into an array in the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/deepItem"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.inner.array.0.name"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Deep Item');
+            expect(res[1]).to.equal('Array Item 0');
+            done();
+        });
+    });
+
     it('supports piping integer response into the next request', (done) => {
 
         Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }', (res) => {
