@@ -122,6 +122,15 @@ const redirectHandler = function (request, reply) {
     return reply().redirect('/profile');
 };
 
+const interestingIdsHandler = function (request, reply) {
+
+    return reply({
+        'idWithDash': '55cf-687663-55cf687663',
+        'idLikeFilename': '55cf687663.png',
+        'idLikeFileNameWithDash': '55cf-687663-55cf687663.png'
+    });
+};
+
 const fetch1 = function (request, next) {
 
     next('Hello');
@@ -182,6 +191,7 @@ module.exports.setupServer = function (done) {
         { method: 'GET', path: '/int', handler: integerHandler },
         { method: 'GET', path: '/int/{id}', handler: integerItemHandler },
         { method: 'GET', path: '/string', handler: stringItemHandler },
+        { method: 'GET', path: '/interestingIds', handler: interestingIdsHandler },
         { method: 'GET', path: '/error', handler: errorHandler },
         { method: 'GET', path: '/badchar', handler: badCharHandler },
         { method: 'GET', path: '/badvalue', handler: badValueHandler },

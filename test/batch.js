@@ -203,6 +203,39 @@ describe('Batch', () => {
         });
     });
 
+    it('supports piping Id\'s with "-" (like a uuid) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idWithDash"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idWithDash).to.equal('55cf-687663-55cf687663');
+            expect(res[1].id).to.equal('55cf-687663-55cf687663');
+            done();
+        });
+    });
+
+    it('supports piping interesting Ids with "." (like a filename) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idLikeFilename"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idLikeFilename).to.equal('55cf687663.png');
+            expect(res[1].id).to.equal('55cf687663.png');
+            done();
+        });
+    });
+
+    it('supports piping interesting Ids with "-" and "." (like a filename) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idLikeFileNameWithDash"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idLikeFileNameWithDash).to.equal('55cf-687663-55cf687663.png');
+            expect(res[1].id).to.equal('55cf-687663-55cf687663.png');
+            done();
+        });
+    });
+
     it('supports piping a deep response into the next request', (done) => {
 
         Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/deepItem"}, {"method": "post", "path": "/echo", "payload": "$0.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.inner.name"}] }', (res) => {
