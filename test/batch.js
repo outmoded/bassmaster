@@ -203,6 +203,65 @@ describe('Batch', () => {
         });
     });
 
+    it('supports piping Id\'s with "-" (like a uuid) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idWithDash"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idWithDash).to.equal('55cf-687663-55cf687663');
+            expect(res[1].id).to.equal('55cf-687663-55cf687663');
+            done();
+        });
+    });
+
+    it('supports piping interesting Ids with "." (like a filename) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idLikeFilename"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idLikeFilename).to.equal('55cf687663.png');
+            expect(res[1].id).to.equal('55cf687663.png');
+            done();
+        });
+    });
+
+    it('supports piping interesting Ids with "-" and "." (like a filename) into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/interestingIds"}, {"method": "get", "path": "/item/$0.idLikeFileNameWithDash"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].idLikeFileNameWithDash).to.equal('55cf-687663-55cf687663.png');
+            expect(res[1].id).to.equal('55cf-687663-55cf687663.png');
+            done();
+        });
+    });
+
+    it('supports piping a deep response into the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/deepItem"}, {"method": "post", "path": "/echo", "payload": "$0.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.name"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.inner.name"}] }', (res) => {
+
+            expect(res.length).to.equal(4);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Deep Item');
+            expect(res[1]).to.equal('Level 1');
+            expect(res[2]).to.equal('Level 2');
+            expect(res[3]).to.equal('Level 3');
+            done();
+        });
+    });
+
+    it('supports piping a deep response into an array in the next request', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/deepItem"}, {"method": "post", "path": "/echo", "payload": "$0.inner.inner.inner.array.0.name"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('Deep Item');
+            expect(res[1]).to.equal('Array Item 0');
+            done();
+        });
+    });
+
     it('supports piping integer response into the next request', (done) => {
 
         Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }', (res) => {
@@ -212,6 +271,19 @@ describe('Batch', () => {
             expect(res[0].name).to.equal('Integer Item');
             expect(res[1].id).to.equal('123');
             expect(res[1].name).to.equal('Integer');
+            done();
+        });
+    });
+
+    it('supports the return of strings instead of json', (done) => {
+
+        Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/string"}, {"method": "get", "path": "/item/$0.id"}] }', (res) => {
+
+            expect(res.length).to.equal(2);
+            expect(res[0].id).to.equal('55cf687663');
+            expect(res[0].name).to.equal('String Item');
+            expect(res[1].id).to.equal('55cf687663');
+            expect(res[1].name).to.equal('Item');
             done();
         });
     });
