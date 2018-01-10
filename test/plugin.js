@@ -18,52 +18,57 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const { expect, fail } = Code;
 
 
 describe('bassmaster', () => {
 
-    it('can be added as a plugin to hapi', (done) => {
+    it('can be added as a plugin to hapi', async () => {
 
         const server = new Hapi.Server();
-        server.connection();
-        server.register({ register: Bassmaster }, (err) => {
 
-            expect(err).to.not.exist();
-            done();
-        });
+        try {
+            await server.register(Bassmaster);
+        }
+        catch (e) {
+            fail('Plugin failed to register');
+        }
+
+        expect(true).to.be.true();
     });
 
-    it('can be given a custom route url', (done) => {
+    it('can be given a custom route url', async () => {
 
         const server = new Hapi.Server();
-        server.connection();
-        server.register({ register: Bassmaster, options: { batchEndpoint: '/custom' } }, (err) => {
 
-            expect(err).to.not.exist();
-            const path = server.connections[0].table()[0].path;
-            expect(path).to.equal('/custom');
-            done();
-        });
+        try {
+            await server.register({ plugin: Bassmaster, options: { batchEndpoint: '/custom' } });
+        }
+        catch (e) {
+            fail('Plugin failed to register');
+        }
+
+        const path = server.table()[0].path;
+        expect(path).to.equal('/custom');
     });
 
-    it('can be given a custom description', (done) => {
+    it('can be given a custom description', async () => {
 
         const server = new Hapi.Server();
-        server.connection();
-        server.register({ register: Bassmaster, options: { description: 'customDescription' } }, (err) => {
+        try {
+            await server.register({ plugin: Bassmaster, options: { description: 'customDescription' } });
+        }
+        catch (e) {
+            fail('Plugin failed to register');
+        }
 
-            expect(err).to.not.exist();
-            const description = server.connections[0].table()[0].settings.description;
-            expect(description).to.equal('customDescription');
-            done();
-        });
+        const description = server.table()[0].settings.description;
+        expect(description).to.equal('customDescription');
     });
 
-    it('can be given an authentication strategy', (done) => {
+    it('can be given an authentication strategy', async () => {
 
         const server = new Hapi.Server();
-        server.connection();
         const mockScheme = {
             authenticate: () => {
 
@@ -83,25 +88,29 @@ describe('bassmaster', () => {
             return mockScheme;
         });
         server.auth.strategy('mockStrategy', 'mockScheme');
-        server.register({ register: Bassmaster, options: { auth: 'mockStrategy' } }, (err) => {
 
-            expect(err).to.not.exist();
-            const auth = server.connections[0].table()[0].settings.auth.strategies[0];
-            expect(auth).to.equal('mockStrategy');
-            done();
-        });
+        try {
+            await server.register({ plugin: Bassmaster, options: { auth: 'mockStrategy' } });
+        }
+        catch (e) {
+            fail('Plugin failed to register');
+        }
+
+        const auth = server.table()[0].settings.auth.strategies[0];
+        expect(auth).to.equal('mockStrategy');
     });
 
-    it('can be given custom tags', (done) => {
+    it('can be given custom tags', async () => {
 
         const server = new Hapi.Server();
-        server.connection();
-        server.register({ register: Bassmaster, options: { tags: ['custom', 'tags'] } }, (err) => {
+        try {
+            await server.register({ plugin: Bassmaster, options: { tags: ['custom', 'tags'] } });
+        }
+        catch (e) {
+            fail('Plugin failed to register');
+        }
 
-            expect(err).to.not.exist();
-            const tags = server.connections[0].table()[0].settings.tags;
-            expect(tags).to.deep.equal(['custom', 'tags']);
-            done();
-        });
+        const tags = server.table()[0].settings.tags;
+        expect(tags).to.equal(['custom', 'tags']);
     });
 });

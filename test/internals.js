@@ -3,35 +3,35 @@
 const Hapi = require('hapi');
 const Bassmaster = require('../');
 
-const profileHandler = function (request, reply) {
+const profileHandler = function (request, h) {
 
     const id = request.query.id || 'fa0dbda9b1b';
 
-    return reply({
-        'id': id,
+    return h.response({
+        id,
         'name': 'John Doe'
     });
 };
 
-const activeItemHandler = function (request, reply) {
+const activeItemHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': '55cf687663',
         'name': 'Active Item'
     });
 };
 
-const itemHandler = function (request, reply) {
+const itemHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': request.params.id,
         'name': 'Item'
     });
 };
 
-const deepItemHandler = function (request, reply) {
+const deepItemHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': '55cf687663',
         'name': 'Deep Item',
         'inner': {
@@ -54,130 +54,126 @@ const deepItemHandler = function (request, reply) {
     });
 };
 
-const item2Handler = function (request, reply) {
+const item2Handler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': request.params.id || 'mystery-guest',
         'name': 'Item'
     });
 };
 
-const arrayHandler = function (request, reply) {
+const arrayHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': '55cf687663',
         'name': 'Dress',
         'items': [{ 'color': 'blackandblue' }, { 'color': 'whiteandgold' }]
     });
 };
 
-const zeroIntegerHandler = function (request, reply) {
+const zeroIntegerHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': 0,
         'name': 'Zero Item'
     });
 };
 
-const integerHandler = function (request, reply) {
+const integerHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': 123,
         'name': 'Integer Item'
     });
 };
 
-const integerItemHandler = function (request, reply) {
+const integerItemHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': request.params.id,
         'name': 'Integer'
     });
 };
 
-const stringItemHandler = function (request, reply) {
+const stringItemHandler = function (request, h) {
 
-    return reply('{' +
+    return h.response('{' +
         '"id": "55cf687663",' +
         '"name": "String Item"' +
     '}');
 };
 
-const badCharHandler = function (request, reply) {
+const badCharHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'id': 'test',
         'null': null,
         'invalidChar': '#'
     });
 };
 
-const badValueHandler = function (request, reply) {
+const badValueHandler = function (request, h) {
 
-    return reply(null);
+    return h.response(null);
 };
 
-const redirectHandler = function (request, reply) {
+const redirectHandler = function (request, h) {
 
-    return reply().redirect('/profile');
+    return h.redirect('/profile');
 };
 
-const interestingIdsHandler = function (request, reply) {
+const interestingIdsHandler = function (request, h) {
 
-    return reply({
+    return h.response({
         'idWithDash': '55cf-687663-55cf687663',
         'idLikeFilename': '55cf687663.png',
         'idLikeFileNameWithDash': '55cf-687663-55cf687663.png'
     });
 };
 
-const fetch1 = function (request, next) {
+const fetch1 = function (request, h) {
 
-    next('Hello');
+    return 'Hello';
 };
 
-const fetch2 = function (request, next) {
+const fetch2 = function (request, h) {
 
-    next(request.pre.m1 + request.pre.m3 + request.pre.m4);
+    return request.pre.m1 + request.pre.m3 + request.pre.m4;
 };
 
-const fetch3 = function (request, next) {
+const fetch3 = function (request, h) {
 
-    process.nextTick(() => {
-
-        next(' ');
-    });
+    return ' ';
 };
 
-const fetch4 = function (request, next) {
+const fetch4 = function (request, h) {
 
-    next('World');
+    return 'World';
 };
 
-const fetch5 = function (request, next) {
+const fetch5 = function (request, h) {
 
-    next(request.pre.m2 + '!');
+    return `${request.pre.m2}!`;
 };
 
-const getFetch = function (request, reply) {
+const getFetch = function (request, h) {
 
-    return reply(request.pre.m5 + '\n');
+    return `${request.pre.m5}\n`;
 };
 
-const errorHandler = function (request, reply) {
+const errorHandler = function (request, h) {
 
-    return reply(new Error('myerror'));
+    return new Error('myerror');
 };
 
-const echoHandler = function (request, reply) {
+const echoHandler = function (request, h) {
 
-    return reply(request.payload);
+    return request.payload;
 };
 
-module.exports.setupServer = function (done) {
+module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
-    server.connection();
     server.route([
         { method: 'POST', path: '/echo', handler: echoHandler },
         { method: 'PUT', path: '/echo', handler: echoHandler },
@@ -212,15 +208,16 @@ module.exports.setupServer = function (done) {
         { method: 'GET', path: '/redirect', handler: redirectHandler }
     ]);
 
-    server.register(Bassmaster, done);
+    await server.register(Bassmaster);
+
     return server;
 };
 
-module.exports.makeRequest = function (server, payload, callback) {
+module.exports.makeRequest = async function (server, payload) {
 
-    server.connections[0].inject({
+    return (await server.inject({
         method: 'post',
         url: '/batch',
-        payload: payload
-    }, (res) => callback(res.result));
+        payload
+    })).result;
 };
