@@ -229,14 +229,17 @@ describe('Batch', () => {
         expect(res[1]).to.equal('Array Item 0');
     });
 
-    it('Does not allow piping a response greater than 500 characters in length', async () => {
+    it('supports piping a response into the next request', async () => {
 
-        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/long-id"}, {"method": "get", "path": "/int/$0.id"}] }');
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }');
 
-        expect(res.statusCode).to.equal(400);
-        expect(res.error).to.equal('Bad Request');
-        expect(res.message).to.equal('Reference value length exceeds the maximum of 500 characters');
+        expect(res.length).to.equal(2);
+        expect(res[0].id).to.equal('55cf687663');
+        expect(res[0].name).to.equal('Active Item');
+        expect(res[1].id).to.equal('55cf687663');
+        expect(res[1].name).to.equal('Item');
     });
+
 
     it('supports the return of strings instead of json', async () => {
 
@@ -260,15 +263,13 @@ describe('Batch', () => {
         expect(res[1].name).to.equal('Integer');
     });
 
-    it('supports piping a response into the next request', async () => {
+    it('Does not allow piping a response greater than 500 characters in length', async () => {
 
-        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }');
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/long-id"}, {"method": "get", "path": "/int/$0.id"}] }');
 
-        expect(res.length).to.equal(2);
-        expect(res[0].id).to.equal('55cf687663');
-        expect(res[0].name).to.equal('Active Item');
-        expect(res[1].id).to.equal('55cf687663');
-        expect(res[1].name).to.equal('Item');
+        expect(res.statusCode).to.equal(400);
+        expect(res.error).to.equal('Bad Request');
+        expect(res.message).to.equal('Reference value length exceeds the maximum of 500 characters');
     });
 
     it('supports posting multiple requests', async () => {
