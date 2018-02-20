@@ -21,6 +21,18 @@ const activeItemHandler = function (request, h) {
     });
 };
 
+const longIdHandler = function (request, h) {
+
+    // return an item with a 500 character long value
+    return h.response({
+        'id': '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111' +
+              '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111' +
+              '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111' +
+              '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111' +
+              '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
+    });
+};
+
 const itemHandler = function (request, h) {
 
     return h.response({
@@ -179,6 +191,7 @@ module.exports.setupServer = async function () {
         { method: 'PUT', path: '/echo', handler: echoHandler },
         { method: 'GET', path: '/profile', handler: profileHandler },
         { method: 'GET', path: '/item', handler: activeItemHandler },
+        { method: 'GET', path: '/long-id', handler: longIdHandler },
         { method: 'GET', path: '/deepItem', handler: deepItemHandler },
         { method: 'GET', path: '/array', handler: arrayHandler },
         { method: 'GET', path: '/item/{id}', handler: itemHandler },
