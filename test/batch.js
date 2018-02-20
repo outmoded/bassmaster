@@ -229,17 +229,16 @@ describe('Batch', () => {
         expect(res[1]).to.equal('Array Item 0');
     });
 
-    it('supports piping a response into the next request', async () => {
+    it('supports piping integer response into the next request', async () => {
 
-        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }');
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/int"}, {"method": "get", "path": "/int/$0.id"}] }');
 
         expect(res.length).to.equal(2);
-        expect(res[0].id).to.equal('55cf687663');
-        expect(res[0].name).to.equal('Active Item');
-        expect(res[1].id).to.equal('55cf687663');
-        expect(res[1].name).to.equal('Item');
+        expect(res[0].id).to.equal(123);
+        expect(res[0].name).to.equal('Integer Item');
+        expect(res[1].id).to.equal('123');
+        expect(res[1].name).to.equal('Integer');
     });
-
 
     it('supports the return of strings instead of json', async () => {
 
