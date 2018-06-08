@@ -3,6 +3,14 @@
 const Hapi = require('hapi');
 const Bassmaster = require('../');
 
+const awaitDelay = function (ms) {
+
+    return new Promise((resolve) => {
+
+        return setTimeout(resolve, ms);
+    });
+};
+
 const profileHandler = function (request, h) {
 
     const id = request.query.id || 'fa0dbda9b1b';
@@ -171,6 +179,21 @@ const echoHandler = function (request, h) {
     return request.payload;
 };
 
+const sequentialHandler = async function (request, h) {
+
+    if (!sequentialHandler.callCount) {
+        sequentialHandler.callCount = 1;
+
+        await awaitDelay(500);
+
+        return sequentialHandler.callCount;
+    }
+
+    await awaitDelay(Math.floor(Math.random() * 100));
+
+    return ++sequentialHandler.callCount;
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -205,7 +228,8 @@ module.exports.setupServer = async function () {
                 ]
             }
         },
-        { method: 'GET', path: '/redirect', handler: redirectHandler }
+        { method: 'GET', path: '/redirect', handler: redirectHandler },
+        { method: 'GET', path: '/sequential', handler: sequentialHandler }
     ]);
 
     await server.register(Bassmaster);
