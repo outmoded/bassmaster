@@ -182,16 +182,13 @@ const echoHandler = function (request, h) {
 const sequentialHandler = async function (request, h) {
 
     if (!sequentialHandler.callCount) {
-        sequentialHandler.callCount = 1;
-
-        await awaitDelay(500);
-
-        return sequentialHandler.callCount;
+        sequentialHandler.callCount = 0;
     }
 
-    await awaitDelay(Math.floor(Math.random() * 100));
+    ++sequentialHandler.callCount;
+    await awaitDelay(50 - (10 * sequentialHandler.callCount));
 
-    return ++sequentialHandler.callCount;
+    return sequentialHandler.callCount;
 };
 
 module.exports.setupServer = async function () {
