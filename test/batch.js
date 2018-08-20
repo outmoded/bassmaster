@@ -498,4 +498,12 @@ describe('Batch', () => {
         expect(res[1].foo).to.be.empty();
 
     });
+
+    it('Now substitutes even 0 in serialized requests', async () => {
+
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "post", "path": "/returnInputtedInteger", "payload": {"id": "$0.id"}} ] }');
+
+        expect(res[0].id).to.equal(0);
+        expect(res[1]).to.equal(0);
+    });
 });

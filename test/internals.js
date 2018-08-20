@@ -171,6 +171,11 @@ const echoHandler = function (request, h) {
     return request.payload;
 };
 
+const returnInputtedIntegerHandler = function (request, h) {
+
+    return request.payload.id;
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -205,7 +210,8 @@ module.exports.setupServer = async function () {
                 ]
             }
         },
-        { method: 'GET', path: '/redirect', handler: redirectHandler }
+        { method: 'GET', path: '/redirect', handler: redirectHandler },
+        { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler }
     ]);
 
     await server.register(Bassmaster);
