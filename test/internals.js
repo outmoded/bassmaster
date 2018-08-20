@@ -174,7 +174,7 @@ const echoHandler = function (request, h) {
 const returnInputtedIntegerHandler = function (request, h) {
 
     return request.payload.id;
-}
+};
 
 module.exports.setupServer = async function () {
 
