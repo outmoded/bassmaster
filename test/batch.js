@@ -30,6 +30,13 @@ describe('Batch', () => {
         expect(res.length).to.equal(1);
     });
 
+    it('Requests in series now substitutes 0 when needed', async () => {
+        const res = await Internals.makeRequest(server, '{ "requests": [{ "method": "get", "path": "/zero" }, { "method": "post", "path": "/returnInputtedInteger", "payload": { "id": "$0.id" } }] }');
+
+        expect(res[0].id).to.equal(0);
+        expect(res[1]).to.equal(0);
+    });
+
     it('supports redirect', async () => {
 
         const res = await Internals.makeRequest(server, '{ "requests": [{ "method": "get", "path": "/redirect" }] }');
