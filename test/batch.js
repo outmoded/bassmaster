@@ -514,20 +514,4 @@ describe('Batch', () => {
         expect(res[0]).to.equal(false);
         expect(res[1]).to.equal(false);
     });
-
-    it('Now substitutes even `\'\'` in serialized requests', async () => {
-
-        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/getEmptyString"}, {"method": "post", "path": "/returnInputtedString", "payload": {"str": "$0"}} ] }');
-
-        expect(res[0]).to.equal('');
-        expect(res[1]).to.equal('');
-    });
-
-    it('Now substitutes even `null` in serialized requests', async () => {
-
-        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/getNull"}, {"method": "post", "path": "/returnInputtedNull", "payload": {"val": "$0"}} ] }');
-
-        expect(res[0]).to.equal(null);
-        expect(res[1]).to.equal(null);
-    });
 });
