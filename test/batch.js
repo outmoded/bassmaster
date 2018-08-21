@@ -499,7 +499,7 @@ describe('Batch', () => {
 
     });
 
-    it('Now substitutes even 0 in serialized requests', async () => {
+    it('Now substitutes even `0` in serialized requests', async () => {
 
         const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/zero"}, {"method": "post", "path": "/returnInputtedInteger", "payload": {"id": "$0.id"}} ] }');
 
@@ -507,11 +507,27 @@ describe('Batch', () => {
         expect(res[1]).to.equal(0);
     });
 
-    it('Now substitutes even "false" in serialized requests', async () => {
+    it('Now substitutes even `false` in serialized requests', async () => {
 
         const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/getFalse"}, {"method": "post", "path": "/returnInputtedBoolean", "payload": {"bool": "$0"}} ] }');
 
         expect(res[0]).to.equal(false);
         expect(res[1]).to.equal(false);
+    });
+
+    it('Now substitutes even `\'\'` in serialized requests', async () => {
+
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/getEmptyString"}, {"method": "post", "path": "/returnInputtedString", "payload": {"str": "$0"}} ] }');
+
+        expect(res[0]).to.equal('');
+        expect(res[1]).to.equal('');
+    });
+
+    it('Now substitutes even `null` in serialized requests', async () => {
+
+        const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/getNull"}, {"method": "post", "path": "/returnInputtedNull", "payload": {"val": "$0"}} ] }');
+
+        expect(res[0]).to.equal(null);
+        expect(res[1]).to.equal(null);
     });
 });

@@ -186,6 +186,26 @@ const returnInputtedBooleanHandler = function (request, h) {
     return request.payload.bool;
 };
 
+const getEmptyStringHandler = function (request, h) {
+
+    return '';
+};
+
+const returnInputtedStringHandler = function (request, h) {
+
+    return request.payload.str;
+};
+
+const getNullHandler = function (request, h) {
+
+    return null;
+};
+
+const returnInputtedNullHandler = function (request, h) {
+
+    return request.payload.val;
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -223,7 +243,11 @@ module.exports.setupServer = async function () {
         { method: 'GET', path: '/redirect', handler: redirectHandler },
         { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler },
         { method: 'GET', path: '/getFalse', handler: getFalseHandler },
-        { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler }
+        { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler },
+        { method: 'GET', path: '/getEmptyString', handler: getEmptyStringHandler },
+        { method: 'POST', path: '/returnInputtedString', handler: returnInputtedStringHandler },
+        { method: 'GET', path: '/getNull', handler: getNullHandler },
+        { method: 'POST', path: '/returnInputtedNull', handler: returnInputtedNullHandler }
     ]);
 
     await server.register(Bassmaster);
