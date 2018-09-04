@@ -171,6 +171,21 @@ const echoHandler = function (request, h) {
     return request.payload;
 };
 
+const returnInputtedIntegerHandler = function (request, h) {
+
+    return request.payload.id;
+};
+
+const getFalseHandler = function (request, h) {
+
+    return false;
+};
+
+const returnInputtedBooleanHandler = function (request, h) {
+
+    return request.payload.bool;
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -205,7 +220,10 @@ module.exports.setupServer = async function () {
                 ]
             }
         },
-        { method: 'GET', path: '/redirect', handler: redirectHandler }
+        { method: 'GET', path: '/redirect', handler: redirectHandler },
+        { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler },
+        { method: 'GET', path: '/getFalse', handler: getFalseHandler },
+        { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler }
     ]);
 
     await server.register(Bassmaster);
