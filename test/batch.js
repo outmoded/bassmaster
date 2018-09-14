@@ -514,4 +514,66 @@ describe('Batch', () => {
         expect(res[0]).to.equal(false);
         expect(res[1]).to.equal(false);
     });
+
+    it('Checks if pipeline requests works for a request depending on other request with index in non-single digit', async () => {
+
+        const res = await Internals.makeRequest(server, JSON.stringify({
+            requests: [
+                {
+                    method: 'GET',
+                    path: '/item/0'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/1'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/2'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/3'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/4'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/5'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/6'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/7'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/8'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/9'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/10'
+                },
+                {
+                    method: 'GET',
+                    path: '/item/$10.id'
+                }
+            ]
+        }));
+
+        expect(res[0].id).to.equal('0');
+        expect(res[1].id).to.equal('1');
+        expect(res[10].id).to.equal('10');
+        expect(res[11].id).to.equal('10');
+        expect(res[11].name).to.equal('Item');
+    });
 });
