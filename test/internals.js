@@ -186,6 +186,11 @@ const returnInputtedBooleanHandler = function (request, h) {
     return request.payload.bool;
 };
 
+const returnPathParamHandler = function (request, h) {
+
+    return request.params.pathParamInteger;
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -222,6 +227,7 @@ module.exports.setupServer = async function () {
         },
         { method: 'GET', path: '/redirect', handler: redirectHandler },
         { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler },
+        { method: 'GET', path: '/returnPathParamInteger/{pathParamInteger}', handler: returnPathParamHandler },
         { method: 'GET', path: '/getFalse', handler: getFalseHandler },
         { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler }
     ]);

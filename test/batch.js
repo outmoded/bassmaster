@@ -576,4 +576,26 @@ describe('Batch', () => {
         expect(res[11].id).to.equal('10');
         expect(res[11].name).to.equal('Item');
     });
+
+    it('substitutes index in url without any resultPath in url path parameters', async () => {
+
+        const res = await Internals.makeRequest(server, JSON.stringify({
+            requests: [
+                {
+                    method: 'POST',
+                    path: '/returnInputtedInteger',
+                    payload: {
+                        id: 10041995
+                    }
+                },
+                {
+                    method: 'GET',
+                    path: '/returnPathParamInteger/$0'
+                }
+            ]
+        }));
+
+        expect(res[0]).to.equal(10041995);
+        expect(res[1]).to.equal(10041995);
+    });
 });
