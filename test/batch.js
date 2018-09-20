@@ -627,10 +627,20 @@ describe('Batch', () => {
                     }
                 },
                 {
+                    method: 'POST',
+                    path: '/returnInputtedString/$3.id/$3.name',
+                    query: {
+                        queryString: '$3.name'
+                    },
+                    payload: {
+                        payloadString: '$3.name'
+                    }
+                },
+                {
                     method: 'GET',
                     path: '/profile',
                     query: {
-                        id: '$3.id'
+                        id: '$4.id'
                     }
                 }
             ]
@@ -640,6 +650,7 @@ describe('Batch', () => {
         expect(res[1]).to.equal({ id: '55cf687663', name: 'John Doe' });
         expect(res[2]).to.equal({ id: '55cf687663', name: 'Item' });
         expect(res[3]).to.equal({ id: '55cf687663', name: 'Item' });
-        expect(res[4]).to.equal({ id: '55cf687663', name: 'John Doe' });
+        expect(res[4]).to.equal({ id: '55cf687663', paramString: 'Item', queryString: 'Item', payloadString: 'Item' });
+        expect(res[5]).to.equal({ id: '55cf687663', name: 'John Doe' });
     });
 });

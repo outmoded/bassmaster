@@ -191,6 +191,16 @@ const returnPathParamHandler = function (request, h) {
     return request.params.pathParamInteger;
 };
 
+const returnInputtedStringHandler = function (request, h) {
+
+    return {
+        id: request.params.id,
+        paramString: request.params.paramString,
+        queryString: request.query.queryString,
+        payloadString: request.payload.payloadString
+    };
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
@@ -229,7 +239,8 @@ module.exports.setupServer = async function () {
         { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler },
         { method: 'GET', path: '/returnPathParamInteger/{pathParamInteger}', handler: returnPathParamHandler },
         { method: 'GET', path: '/getFalse', handler: getFalseHandler },
-        { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler }
+        { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler },
+        { method: 'POST', path: '/returnInputtedString/{id}/{paramString}', handler: returnInputtedStringHandler }
     ]);
 
     await server.register(Bassmaster);
