@@ -57,3 +57,14 @@ Optionally you can assign the query as a third property rather than placing it d
 ```
 
 If an error occurs as a result of one the requests to an endpoint it will be included in the response in the same location in the array as the request causing the issue.  The error object will include an error property that you can interrogate.  At this time the response is a 200 even when a request in the batch returns a different code.
+
+By default, requests in the `"requests"` array will be run concurrently, with the exception of pipelined requests which will be run sequentially.
+To force all batched requests to run sequentially regardless of pipelining, pass in the `forceSequential: true` flag:
+
+```json
+{ "forceSequential": true,
+  "requests": [
+    {"method": "get", "path": "/users/1"},
+    {"method": "get", "path": "/users/2"}
+] }
+```

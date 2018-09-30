@@ -3,6 +3,14 @@
 const Hapi = require('hapi');
 const Bassmaster = require('../');
 
+const awaitDelay = function (ms) {
+
+    return new Promise((resolve) => {
+
+        return setTimeout(resolve, ms);
+    });
+};
+
 const profileHandler = function (request, h) {
 
     const id = request.query.id || 'fa0dbda9b1b';
@@ -171,6 +179,18 @@ const echoHandler = function (request, h) {
     return request.payload;
 };
 
+const sequentialHandler = async function (request, h) {
+
+    if (!sequentialHandler.callCount) {
+        sequentialHandler.callCount = 0;
+    }
+
+    ++sequentialHandler.callCount;
+    await awaitDelay(50 - (10 * sequentialHandler.callCount));
+
+    return sequentialHandler.callCount;
+};
+
 const returnInputtedIntegerHandler = function (request, h) {
 
     return request.payload.id;
@@ -226,6 +246,7 @@ module.exports.setupServer = async function () {
             }
         },
         { method: 'GET', path: '/redirect', handler: redirectHandler },
+        { method: 'GET', path: '/sequential', handler: sequentialHandler }
         { method: 'POST', path: '/returnInputtedInteger', handler: returnInputtedIntegerHandler },
         { method: 'GET', path: '/returnPathParamInteger/{pathParamInteger}', handler: returnPathParamHandler },
         { method: 'GET', path: '/getFalse', handler: getFalseHandler },

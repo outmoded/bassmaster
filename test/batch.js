@@ -169,6 +169,17 @@ describe('Batch', () => {
         expect(res[1].name).to.equal('Active Item');
     });
 
+    it('handles sequential requests with forceSequential', async () =>  {
+
+        const res = await Internals.makeRequest(server, '{ "forceSequential": true, "requests": [{"method": "get", "path": "/sequential"}, {"method": "get", "path": "/sequential"}, {"method": "get", "path": "/sequential"}, {"method": "get", "path": "/sequential"}] }');
+
+        expect(res.length).to.equal(4);
+        expect(res[0]).to.equal(1);
+        expect(res[1]).to.equal(2);
+        expect(res[2]).to.equal(3);
+        expect(res[3]).to.equal(4);
+    });
+
     it('supports piping a response into the next request', async () => {
 
         const res = await Internals.makeRequest(server, '{ "requests": [ {"method": "get", "path": "/item"}, {"method": "get", "path": "/item/$0.id"}] }');
