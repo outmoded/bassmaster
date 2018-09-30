@@ -598,4 +598,59 @@ describe('Batch', () => {
         expect(res[0]).to.equal(10041995);
         expect(res[1]).to.equal(10041995);
     });
+
+    it('Query parameters and payload both now supports pipelined requests', async () => {
+
+        const res = await Internals.makeRequest(server, JSON.stringify({
+            requests: [
+                {
+                    method: 'GET',
+                    path: '/item'
+                },
+                {
+                    method: 'GET',
+                    path: '/profile',
+                    query: {
+                        id: '$0.id'
+                    }
+                },
+                {
+                    method: 'GET',
+                    path: '/item/$1.id'
+                },
+                {
+                    method: 'POST',
+                    path: '/echo',
+                    payload: {
+                        id: '$2.id',
+                        name: '$2.name'
+                    }
+                },
+                {
+                    method: 'POST',
+                    path: '/returnInputtedString/$3.id/$3.name',
+                    query: {
+                        queryString: '$3.name'
+                    },
+                    payload: {
+                        payloadString: '$3.name'
+                    }
+                },
+                {
+                    method: 'GET',
+                    path: '/profile',
+                    query: {
+                        id: '$4.id'
+                    }
+                }
+            ]
+        }));
+
+        expect(res[0]).to.equal({ id: '55cf687663', name: 'Active Item' });
+        expect(res[1]).to.equal({ id: '55cf687663', name: 'John Doe' });
+        expect(res[2]).to.equal({ id: '55cf687663', name: 'Item' });
+        expect(res[3]).to.equal({ id: '55cf687663', name: 'Item' });
+        expect(res[4]).to.equal({ id: '55cf687663', paramString: 'Item', queryString: 'Item', payloadString: 'Item' });
+        expect(res[5]).to.equal({ id: '55cf687663', name: 'John Doe' });
+    });
 });
