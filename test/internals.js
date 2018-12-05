@@ -201,9 +201,31 @@ const returnInputtedStringHandler = function (request, h) {
     };
 };
 
+const protectedHandler = function (request, h) {
+
+    return 'authenticated';
+};
+
 module.exports.setupServer = async function () {
 
     const server = new Hapi.Server();
+
+    server.auth.scheme('mockScheme', () => ({
+
+        authenticate: (request, h) => {
+
+            server.app.authCount += 1;
+
+            if (request.headers.authorization === '12345') {
+                return h.authenticated({ credentials: { user_id: 12345 } });
+            }
+
+            return h.unauthenticated();
+        }
+    }));
+
+    server.auth.strategy('mockStrategy', 'mockScheme');
+
     server.route([
         { method: 'POST', path: '/echo', handler: echoHandler },
         { method: 'PUT', path: '/echo', handler: echoHandler },
@@ -240,10 +262,26 @@ module.exports.setupServer = async function () {
         { method: 'GET', path: '/returnPathParamInteger/{pathParamInteger}', handler: returnPathParamHandler },
         { method: 'GET', path: '/getFalse', handler: getFalseHandler },
         { method: 'POST', path: '/returnInputtedBoolean', handler: returnInputtedBooleanHandler },
-        { method: 'POST', path: '/returnInputtedString/{id}/{paramString}', handler: returnInputtedStringHandler }
+        { method: 'POST', path: '/returnInputtedString/{id}/{paramString}', handler: returnInputtedStringHandler },
+        {
+            method: 'GET',
+            path: '/protected',
+            handler: protectedHandler,
+            options: {
+                auth: 'mockStrategy'
+            }
+        }
     ]);
 
-    await server.register(Bassmaster);
+    await server.register({
+        plugin: Bassmaster,
+        options: {
+            auth: {
+                strategy: 'mockStrategy',
+                mode: 'optional'
+            }
+        }
+    });
 
     return server;
 };
@@ -253,6 +291,16 @@ module.exports.makeRequest = async function (server, payload) {
     return (await server.inject({
         method: 'post',
         url: '/batch',
+        payload
+    })).result;
+};
+
+module.exports.makeAuthenticatedRequest = async function (server, payload) {
+
+    return (await server.inject({
+        method: 'post',
+        url: '/batch',
+        headers: { authorization: '12345' },
         payload
     })).result;
 };

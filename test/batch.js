@@ -9,7 +9,7 @@ const Internals = require('./internals.js');
 // Test shortcuts
 
 const lab = exports.lab = Lab.script();
-const { describe, it, before } = lab;
+const { describe, it, before, beforeEach } = lab;
 const { expect } = Code;
 
 let server = null;
@@ -19,6 +19,11 @@ describe('Batch', () => {
     before( async () => {
 
         server = await Internals.setupServer();
+    });
+
+    beforeEach( () => {
+
+        server.app = { authCount: 0 };
     });
 
     it('shows single response when making request for single endpoint', async () => {
@@ -652,5 +657,14 @@ describe('Batch', () => {
         expect(res[3]).to.equal({ id: '55cf687663', name: 'Item' });
         expect(res[4]).to.equal({ id: '55cf687663', paramString: 'Item', queryString: 'Item', payloadString: 'Item' });
         expect(res[5]).to.equal({ id: '55cf687663', name: 'John Doe' });
+    });
+
+    it('supports reusing batch endpoint credentials for subsequent requests', async () => {
+
+        const res = await Internals.makeAuthenticatedRequest(server, '{ "requests": [ {"method": "get", "path": "/protected"}, {"method": "get", "path": "/protected"} ] }');
+
+        expect(server.app.authCount).to.equal(1);
+        expect(res[0]).to.equal('authenticated');
+        expect(res[1]).to.equal('authenticated');
     });
 });
